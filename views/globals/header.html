@@ -1,0 +1,21 @@
+{{ define "header" }}
+{{if .flashMessage}}
+<div style="color: red;">
+    {{.flashMessage}}
+</div>
+{{end}}
+
+<header>
+  <h1>Welcome to My Site</h1>
+  {{if .IsLoggedIn}}
+  <p>Logged in as: {{.UserID}} via {{.Provider}}</p>
+  {{else}}
+  <p>You are not logged in.</p>
+  {{end}}
+  <ul>
+    <li><a href="/">Homepage</a></li>
+    <li><a href="/login">Login</a></li>
+    <li><a href="/dashboard">Dashboard</a></li>
+  </ul>
+</header>
+{{ end }}

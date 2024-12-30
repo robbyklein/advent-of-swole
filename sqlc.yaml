@@ -1,0 +1,13 @@
+version: "2"
+servers:
+  - engine: postgresql
+    uri: "postgres://localhost:5432/swole?sslmode=disable"
+sql:
+  - engine: "postgresql"
+    queries: "./db/queries"
+    schema: "./db/migrations"
+    gen:
+      go:
+        package: "sqlc"
+        out: "sqlc"
+        sql_package: "pgx/v5"

@@ -1,0 +1,33 @@
+{{ define "login" }}
+  {{ template "head" . }}
+
+
+  <div class="auth mt-6">
+    <div class="width">
+      <div class="auth__inner">
+        <a href="/">Advent of Swole</a>
+
+        <div class="box">
+          <h1>Welcome back</h1>
+
+          <div class="button">
+            <a href="/auth/google">
+              Login with Google
+            </a>
+          </div>
+        
+          <div>
+            <a href="/auth/apple">
+              Login with Apple
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  {{ template "foot" . }}
+{{ end }}
