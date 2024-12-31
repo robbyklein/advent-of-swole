@@ -16,6 +16,8 @@ import (
 
 func init() {
 	helpers.ValidateEnvVars()
+	initializers.LoadIPDatabase()
+	initializers.LoadLocation()
 	initializers.LoadHTMLTemplates()
 	initializers.CreateOAuthConfig()
 	initializers.CreateAppleOAuthConfig()
@@ -30,9 +32,7 @@ func main() {
 	// Middleware
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
-	router.Use(httprate.LimitByIP(100, 1*time.Minute))
-	router.Use(middle.EnforceHTTPS)
-	router.Use(middle.EnforceHSTS)
+	router.Use(httprate.LimitByIP(50, 1*time.Minute))
 
 	// Serve static files
 	router.Get("/*", func(w http.ResponseWriter, r *http.Request) {
@@ -42,6 +42,7 @@ func main() {
 	// Public routes
 	router.Get("/", controllers.HomeGET)
 	router.Get("/login", controllers.LoginGET)
+	router.Get("/logout", controllers.LogoutGET)
 	router.Get("/auth/google", controllers.GoogleGET)
 	router.Get("/auth/google/callback", controllers.GoogleCallbackGET)
 	router.Get("/auth/apple", controllers.AppleGET)
@@ -51,10 +52,9 @@ func main() {
 	router.Group(func(r chi.Router) {
 		r.Use(middle.AuthMiddleware)
 
-		r.Get("/dashboard", controllers.DashboardGET)
+		r.Get("/settings", controllers.SettingsGET)
+		r.Post("/settings", controllers.SettingsPOST)
 	})
-
-	// router.Post("/signup", controllers.SignupPOST)
 
 	// Start
 	http.ListenAndServe(":3000", router)

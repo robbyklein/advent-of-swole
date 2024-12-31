@@ -1,21 +1,23 @@
 {{ define "header" }}
-{{if .flashMessage}}
-<div style="color: red;">
-    {{.flashMessage}}
-</div>
-{{end}}
+<header class="header">
+  <div class="width">
+    <div class="header__inner">
 
-<header>
-  <h1>Welcome to My Site</h1>
-  {{if .IsLoggedIn}}
-  <p>Logged in as: {{.UserID}} via {{.Provider}}</p>
-  {{else}}
-  <p>You are not logged in.</p>
-  {{end}}
-  <ul>
-    <li><a href="/">Homepage</a></li>
-    <li><a href="/login">Login</a></li>
-    <li><a href="/dashboard">Dashboard</a></li>
-  </ul>
+      <a href="/" class="header-logo">
+        {{ template "bicepIcon" . }}
+        <span class="header-logo__text">Advent of Swole</span>
+        <span class="header-logo__beta">Beta</span>
+      </a>
+
+      <ul class="header__nav">
+        {{if .IsLoggedIn}}
+          <li><a href="/settings">Settings</a></li>
+          <li><a href="/logout">Logout</a></li>
+        {{else}}
+          <li><a href="/login">Login</a></li>
+        {{end}}
+      </ul>
+    </div>
+  </div>
 </header>
 {{ end }}

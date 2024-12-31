@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.button {
+  @apply border rounded-md font-medium justify-center items-center;
+  @apply inline-flex gap-2.5 w-full px-4 py-2 text-sm text-center;
+  @apply border-transparent bg-transparent transition-colors duration-150;
+
+  &.button--full-width {
+    @apply flex;
+  }
+
+  &.button--primary {
+    @apply border-blue-700 bg-blue-700;
+  }
+
+  &.button--secondary {
+    @apply border-zinc-700 bg-zinc-700;
+
+    &:hover {
+      @apply bg-zinc-700;
+    }
+  }
+
+  &.button--line {
+    @apply bg-transparent;
+  }
+}

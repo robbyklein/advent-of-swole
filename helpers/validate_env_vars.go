@@ -25,6 +25,4 @@ func ValidateEnvVars() {
 			log.Fatalf("Missing required environment variable: %s", envVar)
 		}
 	}
-
-	log.Println("All required environment variables are set.")
 }

@@ -2,8 +2,32 @@
   {{ template "head" . }}
   {{ template "header" . }}
 
-  <main>
-    <h2>Home Page</h2>
+  <main class="py-8">
+    <div class="width width--flex">
+
+      <header class="home-header">
+        <h1>
+          <small>Welcome to the {{ .Annual }} annual</small>
+          Advent of Swole
+        </h1>
+      </header>
+
+      <div class="home-grid">
+        {{ range .Days }}
+          {{ if .Active }}
+            <a href="/day/{{ $.Year }}-{{ $.Month }}-{{ .Number }}" class="home-grid__item">
+              {{ .Number }}
+            </a>
+          {{ else }}
+            <div class="home-grid__item">
+              {{ .Number }}
+            </div>
+          {{ end }}
+
+        {{ end }}
+      </div>
+      
+    </div>
   </main>
 
   {{ template "footer" . }}

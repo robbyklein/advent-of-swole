@@ -2,7 +2,11 @@
 module.exports = {
   content: ["./views/**/*.{html,js}"],
   theme: {
-    extend: {},
+    extend: {
+      fontSize: {
+        "2xs": "0.625rem",
+      },
+    },
   },
   plugins: [],
 };

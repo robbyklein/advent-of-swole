@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.home-header {
+  @apply text-center pb-8;
+
+  h1 {
+    @apply text-4xl font-medium;
+  }
+
+  small {
+    @apply block font-normal;
+    @apply text-lg text-zinc-400;
+  }
+}
+
+.home-grid {
+  @apply grid grid-cols-2 gap-2 flex-1;
+  @apply sm:grid-cols-4;
+  @apply md:grid-cols-5;
+}
+
+.home-grid__item {
+  @apply text-3xl font-black;
+  @apply bg-zinc-900 px-4 py-5 items-center justify-center flex;
+
+  .home-grid__item--disabled {
+    opacity: 0.5;
+  }
+}
+
+div.home-grid__item {
+  opacity: 0.5;
+}

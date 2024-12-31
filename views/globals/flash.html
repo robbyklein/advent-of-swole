@@ -1,0 +1,9 @@
+{{ define "flash" }}
+  {{if .flashMessage}}
+    <div class="flash">
+      <div class="width">
+        <p>{{.flashMessage}}</p>
+      </div>
+    </div>
+  {{ end }}
+{{ end }}

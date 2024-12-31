@@ -3,5 +3,5 @@
 @tailwind utilities;
 
 .box {
-  @apply border border-slate-600 rounded;
+  @apply border border-zinc-950 bg-zinc-950 rounded-xl p-6;
 }

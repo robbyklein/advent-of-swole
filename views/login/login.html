@@ -2,32 +2,36 @@
   {{ template "head" . }}
 
 
-  <div class="auth mt-6">
+  <div class="login-fixed">
     <div class="width">
-      <div class="auth__inner">
-        <a href="/">Advent of Swole</a>
 
-        <div class="box">
-          <h1>Welcome back</h1>
-
-          <div class="button">
-            <a href="/auth/google">
-              Login with Google
-            </a>
-          </div>
+      <div class="login-fixed__inner">
+        <div class="login-fixed__logo">
+          <a href="/">Advent of Swole</a>
+        </div>
         
-          <div>
-            <a href="/auth/apple">
-              Login with Apple
+        <div class="box">
+          <div class="login-fixed__header">
+            <h1>Welcome back</h1>
+            <h2>Login with your Apple or Google account</h2>
+          </div>
+
+          <div class="login-fixed__buttons">
+            <a class="button button--secondary button--line" href="/auth/apple">
+              {{ template "appleIcon" . }}
+              <span>Login with Apple</span>
+            </a>
+
+            <a class="button button--secondary button--line" href="/auth/google">
+              {{ template "googleIcon" . }}
+              <span>Login with Google</span>
             </a>
           </div>
         </div>
       </div>
+
     </div>
   </div>
-
-
-
 
   {{ template "foot" . }}
 {{ end }}

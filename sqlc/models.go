@@ -8,15 +8,19 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type Setting struct {
+	ID          int64
+	UserID      int64
+	Timezone    string
+	DisplayName string
+	CreatedAt   pgtype.Timestamptz
+	UpdatedAt   pgtype.Timestamptz
+}
+
 type User struct {
-	ID                  int64
-	Email               string
-	PasswordHash        string
-	CreatedAt           pgtype.Timestamptz
-	UpdatedAt           pgtype.Timestamptz
-	ConfirmedAt         pgtype.Timestamptz
-	ConfirmationToken   pgtype.Text
-	ConfirmationSentAt  pgtype.Timestamptz
-	ResetPasswordToken  pgtype.Text
-	ResetPasswordSentAt pgtype.Timestamptz
+	ID              int64
+	OauthProvider   string
+	OauthProviderID string
+	CreatedAt       pgtype.Timestamptz
+	UpdatedAt       pgtype.Timestamptz
 }

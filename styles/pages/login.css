@@ -1,0 +1,28 @@
+.login-fixed {
+  @apply fixed top-0 left-0 w-full h-full py-6;
+  @apply overflow-y-auto flex items-center justify-center;
+}
+
+.login-fixed__inner {
+  @apply max-w-sm mx-auto;
+}
+
+.login-fixed__logo {
+  @apply text-center text-base mb-4 font-medium;
+}
+
+.login-fixed__header {
+  @apply text-center mb-5;
+
+  h1 {
+    @apply text-xl font-semibold mb-1;
+  }
+
+  h2 {
+    @apply text-zinc-400 text-sm;
+  }
+}
+
+.login-fixed__buttons {
+  @apply space-y-4;
+}

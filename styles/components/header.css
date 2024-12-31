@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.header {
+  @apply bg-zinc-950 h-14 flex items-center;
+}
+
+.header__inner {
+  @apply flex items-center justify-between;
+}
+
+.header-logo {
+  @apply inline-flex items-center gap-2;
+
+  .header-logo__text {
+    @apply font-semibold;
+  }
+
+  .header-logo__beta {
+    @apply uppercase px-1 rounded opacity-40;
+    @apply text-2xs font-bold bg-zinc-50 text-zinc-900;
+  }
+}
+
+.header__nav {
+  @apply inline-flex items-center gap-6;
+}

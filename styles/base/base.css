@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-zinc-800 text-zinc-50;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  @apply flex flex-col w-full min-h-dvh;
+}
+
+main {
+  @apply flex flex-col w-full flex-1;
+}

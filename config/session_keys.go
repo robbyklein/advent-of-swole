@@ -1,7 +1,8 @@
-package constants
+package config
 
 const (
-	SESSION_KEY       = "main"
+	OTHER_SESSION_KEY = "other"
+	AUTH_SESSION_KEY  = "auth"
 	FLASH_MESSAGE_KEY = "flashMessage"
 	GOOGLE_STATE_KEY  = "googleOauthState"
 	APPLE_STATE_KEY   = "appleOauthState"

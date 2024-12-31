@@ -4,10 +4,10 @@ FROM users
 WHERE id = $1
 LIMIT 1;
 
--- name: GetUserByEmail :one
+-- name: GetUserByProviderId :one
 SELECT *
 FROM users
-WHERE email = $1
+WHERE oauth_provider = $1 AND oauth_provider_id = $2
 LIMIT 1;
 
 -- name: ListUsers :many
@@ -17,8 +17,8 @@ ORDER BY id;
 
 -- name: CreateUser :one
 INSERT INTO users (
-  email,
-  password_hash
+  oauth_provider,
+  oauth_provider_id
 ) VALUES (
   $1,
   $2
@@ -28,8 +28,8 @@ RETURNING *;
 -- name: UpdateUser :exec
 UPDATE users
 SET
-  email = $2,
-  password_hash = $3,
+  oauth_provider = $2,
+  oauth_provider_id = $3,
   updated_at = NOW()
 WHERE id = $1;
 

@@ -27,3 +27,4 @@ go.work.sum
 .envrc
 *.p8
 node_modules
+GeoLite2-City.mmdb

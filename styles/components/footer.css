@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.footer {
+  @apply bg-zinc-950 h-14 flex items-center;
+}
+
+.footer__inner {
+  @apply flex items-center justify-between;
+}
+
+.footer__nav {
+  @apply inline-flex items-center gap-6;
+}

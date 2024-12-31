@@ -1,0 +1,12 @@
+.field {
+  label {
+    @apply inline-block mb-1.5 font-medium text-sm;
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    @apply block w-full bg-zinc-950 px-4 py-2.5 rounded;
+  }
+}

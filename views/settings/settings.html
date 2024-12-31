@@ -1,0 +1,42 @@
+{{ define "settings" }}
+  {{ template "head" . }}
+  {{ template "header" . }}
+
+  <main>
+    <div class="width width--fixed">
+      <div class="settings__inner">
+        <h1>Settings</h1>
+
+        <form class="settings__form" method="POST" action="/settings">
+          <div class="field">
+            <label for="displayName">Display name</label>
+            <input required id="displayName" value="{{ .DisplayName }}"  type="text" placeholder="JackedFool49" name="displayName" />
+          </div>
+
+          <div class="field">
+            <label for="timezone">Timezone</label>
+            <select id="timezone" name="timezone">
+              {{ range .Timezones }}
+                <option value="{{ . }}" {{ if eq $.Timezone . }}selected{{ end }}>{{ . }}</option>
+              {{ end }}
+            </select>
+          </div>
+
+          <div class="field">
+            <button class="button button--primary" type="submit">Save</button>
+          </div>
+
+          {{ if eq .Query.success "1" }}
+            <div class="alert alert--success">
+              Your settings have been updated successfully!
+            </div>
+          {{ end }}
+        </form>
+      </div>
+    </div>
+  </main>
+
+
+  {{ template "footer" . }}
+  {{ template "foot" . }}
+{{ end }}

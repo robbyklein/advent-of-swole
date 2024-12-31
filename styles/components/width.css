@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.width {
+  @apply max-w-6xl mx-auto;
+  width: calc(100% - 40px);
+
+  &.width--flex {
+    @apply flex flex-col flex-1;
+  }
+}

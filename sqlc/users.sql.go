@@ -11,34 +11,29 @@ import (
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (
-  email,
-  password_hash
+  oauth_provider,
+  oauth_provider_id
 ) VALUES (
   $1,
   $2
 )
-RETURNING id, email, password_hash, created_at, updated_at, confirmed_at, confirmation_token, confirmation_sent_at, reset_password_token, reset_password_sent_at
+RETURNING id, oauth_provider, oauth_provider_id, created_at, updated_at
 `
 
 type CreateUserParams struct {
-	Email        string
-	PasswordHash string
+	OauthProvider   string
+	OauthProviderID string
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
-	row := q.db.QueryRow(ctx, createUser, arg.Email, arg.PasswordHash)
+	row := q.db.QueryRow(ctx, createUser, arg.OauthProvider, arg.OauthProviderID)
 	var i User
 	err := row.Scan(
 		&i.ID,
-		&i.Email,
-		&i.PasswordHash,
+		&i.OauthProvider,
+		&i.OauthProviderID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-		&i.ConfirmedAt,
-		&i.ConfirmationToken,
-		&i.ConfirmationSentAt,
-		&i.ResetPasswordToken,
-		&i.ResetPasswordSentAt,
 	)
 	return i, err
 }
@@ -54,7 +49,7 @@ func (q *Queries) DeleteUser(ctx context.Context, id int64) error {
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, email, password_hash, created_at, updated_at, confirmed_at, confirmation_token, confirmation_sent_at, reset_password_token, reset_password_sent_at
+SELECT id, oauth_provider, oauth_provider_id, created_at, updated_at
 FROM users
 WHERE id = $1
 LIMIT 1
@@ -65,46 +60,41 @@ func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {
 	var i User
 	err := row.Scan(
 		&i.ID,
-		&i.Email,
-		&i.PasswordHash,
+		&i.OauthProvider,
+		&i.OauthProviderID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-		&i.ConfirmedAt,
-		&i.ConfirmationToken,
-		&i.ConfirmationSentAt,
-		&i.ResetPasswordToken,
-		&i.ResetPasswordSentAt,
 	)
 	return i, err
 }
 
-const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, email, password_hash, created_at, updated_at, confirmed_at, confirmation_token, confirmation_sent_at, reset_password_token, reset_password_sent_at
+const getUserByProviderId = `-- name: GetUserByProviderId :one
+SELECT id, oauth_provider, oauth_provider_id, created_at, updated_at
 FROM users
-WHERE email = $1
+WHERE oauth_provider = $1 AND oauth_provider_id = $2
 LIMIT 1
 `
 
-func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error) {
-	row := q.db.QueryRow(ctx, getUserByEmail, email)
+type GetUserByProviderIdParams struct {
+	OauthProvider   string
+	OauthProviderID string
+}
+
+func (q *Queries) GetUserByProviderId(ctx context.Context, arg GetUserByProviderIdParams) (User, error) {
+	row := q.db.QueryRow(ctx, getUserByProviderId, arg.OauthProvider, arg.OauthProviderID)
 	var i User
 	err := row.Scan(
 		&i.ID,
-		&i.Email,
-		&i.PasswordHash,
+		&i.OauthProvider,
+		&i.OauthProviderID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-		&i.ConfirmedAt,
-		&i.ConfirmationToken,
-		&i.ConfirmationSentAt,
-		&i.ResetPasswordToken,
-		&i.ResetPasswordSentAt,
 	)
 	return i, err
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT id, email, password_hash, created_at, updated_at, confirmed_at, confirmation_token, confirmation_sent_at, reset_password_token, reset_password_sent_at
+SELECT id, oauth_provider, oauth_provider_id, created_at, updated_at
 FROM users
 ORDER BY id
 `
@@ -120,15 +110,10 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 		var i User
 		if err := rows.Scan(
 			&i.ID,
-			&i.Email,
-			&i.PasswordHash,
+			&i.OauthProvider,
+			&i.OauthProviderID,
 			&i.CreatedAt,
 			&i.UpdatedAt,
-			&i.ConfirmedAt,
-			&i.ConfirmationToken,
-			&i.ConfirmationSentAt,
-			&i.ResetPasswordToken,
-			&i.ResetPasswordSentAt,
 		); err != nil {
 			return nil, err
 		}
@@ -143,19 +128,19 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 const updateUser = `-- name: UpdateUser :exec
 UPDATE users
 SET
-  email = $2,
-  password_hash = $3,
+  oauth_provider = $2,
+  oauth_provider_id = $3,
   updated_at = NOW()
 WHERE id = $1
 `
 
 type UpdateUserParams struct {
-	ID           int64
-	Email        string
-	PasswordHash string
+	ID              int64
+	OauthProvider   string
+	OauthProviderID string
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
-	_, err := q.db.Exec(ctx, updateUser, arg.ID, arg.Email, arg.PasswordHash)
+	_, err := q.db.Exec(ctx, updateUser, arg.ID, arg.OauthProvider, arg.OauthProviderID)
 	return err
 }

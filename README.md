@@ -23,7 +23,11 @@ CompileDaemon --command="./swole" --include="*.html"
 npm run css
 ```
 
-## Database management
+### Database management
+
+```
+goose -dir ./db/migrations create your_migration_name sql
+```
 
 ```
 goose -dir ./db/migrations postgres "$DATABASE_URL" up
@@ -33,13 +37,13 @@ goose -dir ./db/migrations postgres "$DATABASE_URL" up
 goose -dir ./db/migrations postgres "$TEST_DATABASE_URL" up
 ```
 
-## SQLC generation
+### SQLC generation
 
 ```
 sqlc generate
 ```
 
-## Run tests
+### Run tests
 
 ```
 go test -v ./...
