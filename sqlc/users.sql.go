@@ -12,26 +12,44 @@ import (
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (
   oauth_provider,
-  oauth_provider_id
+  oauth_provider_id,
+  email,
+  timezone,
+  display_name
 ) VALUES (
   $1,
-  $2
+  $2,
+  $3,
+  $4,
+  $5
 )
-RETURNING id, oauth_provider, oauth_provider_id, created_at, updated_at
+RETURNING id, oauth_provider, oauth_provider_id, email, timezone, display_name, created_at, updated_at
 `
 
 type CreateUserParams struct {
 	OauthProvider   string
 	OauthProviderID string
+	Email           string
+	Timezone        string
+	DisplayName     string
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
-	row := q.db.QueryRow(ctx, createUser, arg.OauthProvider, arg.OauthProviderID)
+	row := q.db.QueryRow(ctx, createUser,
+		arg.OauthProvider,
+		arg.OauthProviderID,
+		arg.Email,
+		arg.Timezone,
+		arg.DisplayName,
+	)
 	var i User
 	err := row.Scan(
 		&i.ID,
 		&i.OauthProvider,
 		&i.OauthProviderID,
+		&i.Email,
+		&i.Timezone,
+		&i.DisplayName,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -49,7 +67,7 @@ func (q *Queries) DeleteUser(ctx context.Context, id int64) error {
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, oauth_provider, oauth_provider_id, created_at, updated_at
+SELECT id, oauth_provider, oauth_provider_id, email, timezone, display_name, created_at, updated_at
 FROM users
 WHERE id = $1
 LIMIT 1
@@ -62,6 +80,9 @@ func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {
 		&i.ID,
 		&i.OauthProvider,
 		&i.OauthProviderID,
+		&i.Email,
+		&i.Timezone,
+		&i.DisplayName,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -69,7 +90,7 @@ func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {
 }
 
 const getUserByProviderId = `-- name: GetUserByProviderId :one
-SELECT id, oauth_provider, oauth_provider_id, created_at, updated_at
+SELECT id, oauth_provider, oauth_provider_id, email, timezone, display_name, created_at, updated_at
 FROM users
 WHERE oauth_provider = $1 AND oauth_provider_id = $2
 LIMIT 1
@@ -87,6 +108,9 @@ func (q *Queries) GetUserByProviderId(ctx context.Context, arg GetUserByProvider
 		&i.ID,
 		&i.OauthProvider,
 		&i.OauthProviderID,
+		&i.Email,
+		&i.Timezone,
+		&i.DisplayName,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -94,7 +118,7 @@ func (q *Queries) GetUserByProviderId(ctx context.Context, arg GetUserByProvider
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT id, oauth_provider, oauth_provider_id, created_at, updated_at
+SELECT id, oauth_provider, oauth_provider_id, email, timezone, display_name, created_at, updated_at
 FROM users
 ORDER BY id
 `
@@ -112,6 +136,9 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 			&i.ID,
 			&i.OauthProvider,
 			&i.OauthProviderID,
+			&i.Email,
+			&i.Timezone,
+			&i.DisplayName,
 			&i.CreatedAt,
 			&i.UpdatedAt,
 		); err != nil {
@@ -130,6 +157,9 @@ UPDATE users
 SET
   oauth_provider = $2,
   oauth_provider_id = $3,
+  email = $4,
+  timezone = $5,
+  display_name = $6,
   updated_at = NOW()
 WHERE id = $1
 `
@@ -138,9 +168,19 @@ type UpdateUserParams struct {
 	ID              int64
 	OauthProvider   string
 	OauthProviderID string
+	Email           string
+	Timezone        string
+	DisplayName     string
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
-	_, err := q.db.Exec(ctx, updateUser, arg.ID, arg.OauthProvider, arg.OauthProviderID)
+	_, err := q.db.Exec(ctx, updateUser,
+		arg.ID,
+		arg.OauthProvider,
+		arg.OauthProviderID,
+		arg.Email,
+		arg.Timezone,
+		arg.DisplayName,
+	)
 	return err
 }

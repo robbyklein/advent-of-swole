@@ -11,7 +11,11 @@ var Templates *template.Template
 
 func LoadHTMLTemplates() {
 	root := "views"
-	Templates = template.New("")
+
+	// Initialize a new template with a function map
+	Templates = template.New("").Funcs(template.FuncMap{
+		"add": add,
+	})
 
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -31,4 +35,8 @@ func LoadHTMLTemplates() {
 	if err != nil {
 		log.Fatalf("Failed to load HTML templates: %v", err)
 	}
+}
+
+func add(a, b int) int {
+	return a + b
 }

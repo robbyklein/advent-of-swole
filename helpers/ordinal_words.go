@@ -5,7 +5,6 @@ import (
 	"strings"
 )
 
-// OrdinalWords converts an integer to its ordinal word representation in lowercase.
 func OrdinalWords(num int) string {
 	ordinals := map[int]string{
 		1: "first", 2: "second", 3: "third", 4: "fourth", 5: "fifth",

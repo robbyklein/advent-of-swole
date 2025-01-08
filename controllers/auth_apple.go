@@ -17,7 +17,7 @@ func AppleGET(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Generate a random state
+	// Generate a random state string
 	state := helpers.GenerateRandomString(32)
 
 	// Save the state in the session
@@ -29,19 +29,32 @@ func AppleGET(w http.ResponseWriter, r *http.Request) {
 
 	// Build the Apple auth URL
 	url := initializers.AppleOauthConfig.AuthCodeURL(state)
+	url += "&response_mode=form_post"
 
-	// Redirect to Apple
+	// Redirect to auth url
 	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 
-func AppleCallbackGET(w http.ResponseWriter, r *http.Request) {
-	// Extract state and code from url
-	returnedState := r.URL.Query().Get("state")
-	code := r.URL.Query().Get("code")
+func AppleCallbackPOST(w http.ResponseWriter, r *http.Request) {
+	// Parse the form data
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Failed to parse form data", http.StatusBadRequest)
+		return
+	}
+
+	// Extract state and code from the form
+	returnedState := r.FormValue("state")
+	code := r.FormValue("code")
 
 	// Validate the code actually exists
 	if code == "" {
 		http.Error(w, "Missing code parameter", http.StatusBadRequest)
+		return
+	}
+
+	// Validate the state actually exists
+	if returnedState == "" {
+		http.Error(w, "Missing state parameter", http.StatusBadRequest)
 		return
 	}
 
@@ -52,7 +65,7 @@ func AppleCallbackGET(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Verify state matches
+	// Verify states match
 	savedState, ok := session.Values[config.APPLE_STATE_KEY].(string)
 	if !ok || savedState == "" || savedState != returnedState {
 		http.Error(w, "Invalid state parameter", http.StatusBadRequest)
@@ -82,23 +95,29 @@ func AppleCallbackGET(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Extract user identifier
-	userID := claims["sub"].(string)
-	provider := "apple"
-
-	// Retrieve or create the user in the database
-	user, err := db.GetOrCreateUser(provider, userID)
-	if err != nil {
-		http.Error(w, "Could not create or retrieve user: "+err.Error(), http.StatusInternalServerError)
+	userID, userIDExists := claims["sub"].(string)
+	if !userIDExists {
+		http.Error(w, "User ID not found in ID token", http.StatusInternalServerError)
 		return
 	}
 
-	// Create a settings row for the user
+	// Extract email address
+	email, emailExists := claims["email"].(string)
+	if !emailExists {
+		http.Error(w, "User ID not found in ID token", http.StatusInternalServerError)
+		return
+	}
+
+	// Generate display name
 	displayName := helpers.GenerateDisplayName()
+
+	// Guess timezone
 	timezone := helpers.GuessTimezone(r)
 
-	_, err = db.CreateSettings(user.ID, timezone, displayName)
+	// Create the user
+	user, err := db.GetOrCreateUser(ctx, "apple", userID, email, timezone, displayName)
 	if err != nil {
-		http.Error(w, "Could not create settings for user: "+err.Error(), http.StatusInternalServerError)
+		http.Error(w, "User retrieval/creation failed: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -111,6 +130,6 @@ func AppleCallbackGET(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Redirect to home
-	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+	// Redirect to home page
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

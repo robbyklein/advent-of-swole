@@ -1,0 +1,11 @@
+.width {
+  max-width: 1140px;
+  margin: 0 auto;
+  width: calc(100% - 40px);
+
+  &--flex {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+}

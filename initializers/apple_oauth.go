@@ -34,7 +34,7 @@ func CreateAppleOAuthConfig() {
 		ClientID:     clientId,
 		ClientSecret: clientSecret,
 		RedirectURL:  rootUrl + "/auth/apple/callback",
-		Scopes:       []string{},
+		Scopes:       []string{"email"},
 		Endpoint: oauth2.Endpoint{
 			AuthURL:  "https://appleid.apple.com/auth/authorize",
 			TokenURL: "https://appleid.apple.com/auth/token",

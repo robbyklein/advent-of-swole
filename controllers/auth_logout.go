@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/robbyklein/swole/config"
+	"github.com/robbyklein/swole/helpers"
 	"github.com/robbyklein/swole/initializers"
 )
 
@@ -22,20 +23,9 @@ func LogoutGET(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Retrieve the flash session
-	flashSession, err := initializers.Store.Get(r, config.OTHER_SESSION_KEY)
-	if err != nil {
-		http.Error(w, "Could not get flash session", http.StatusInternalServerError)
-		return
-	}
+	// Set flash message
+	helpers.SetFlashMessage(r, w, "You have been logged out")
 
-	// Add the flash message
-	flashSession.Values[config.FLASH_MESSAGE_KEY] = "You have been logged out"
-	if err := flashSession.Save(r, w); err != nil {
-		http.Error(w, "Could not save flash message", http.StatusInternalServerError)
-		return
-	}
-
-	// Redirect to the home or login page
+	// Send them home
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }

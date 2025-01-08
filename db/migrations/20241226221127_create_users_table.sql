@@ -4,6 +4,9 @@ CREATE TABLE IF NOT EXISTS users (
   id                BIGSERIAL PRIMARY KEY,
   oauth_provider    TEXT NOT NULL,
   oauth_provider_id TEXT NOT NULL UNIQUE,
+  email             TEXT NOT NULL,
+  timezone          TEXT NOT NULL,
+  display_name      TEXT NOT NULL,
   created_at        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at        TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

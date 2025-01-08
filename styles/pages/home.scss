@@ -1,0 +1,80 @@
+.home-header {
+  text-align: center;
+  padding-bottom: 40px;
+
+  img {
+    margin: -40px auto 24px;
+  }
+
+  h1 {
+    font-size: 54px;
+    font-weight: 500;
+    font-family: $serif;
+  }
+
+  small {
+    display: block;
+    font-weight: 400;
+    font-size: 18px;
+    font-family: $sans;
+  }
+
+  p {
+    span {
+      font-variant-numeric: tabular-nums;
+    }
+  }
+}
+
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-bottom: 40px;
+}
+
+.home-grid-item {
+  font-size: 24px;
+  display: flex;
+  flex-direction: column;
+  height: 240px;
+  border-radius: $radius;
+  position: relative;
+  overflow: hidden;
+  padding: 20px 20px 0;
+  justify-content: space-between;
+
+  &--enabled {
+    color: $white;
+
+    &:nth-child(3n + 1) {
+      background-color: rgb(223, 64, 71);
+    }
+
+    &:nth-child(3n + 2) {
+      background-color: rgb(231, 162, 9);
+    }
+
+    &:nth-child(3n + 3) {
+      background-color: rgb(70, 113, 86);
+    }
+  }
+
+  &--disabled {
+    background-color: #d4c8c3;
+    color: rgb(115, 109, 104);
+  }
+
+  h3 {
+    font-size: 16px;
+    font-weight: 400;
+  }
+
+  h4 {
+    font-family: serif;
+    font-size: 150px;
+    font-weight: 500;
+    line-height: 1;
+    margin-bottom: -110px;
+  }
+}

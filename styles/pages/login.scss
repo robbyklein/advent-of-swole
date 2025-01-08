@@ -1,0 +1,55 @@
+.login-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &__inner {
+    max-width: 24rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  &__logo {
+    text-align: center;
+    margin-bottom: 12px;
+
+    a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: $text;
+      font-weight: 500;
+    }
+  }
+
+  &__header {
+    text-align: center;
+    margin-bottom: 1.25rem;
+
+    h1 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    h2 {
+      color: #a1a1aa;
+      font-size: 14px;
+      font-weight: 400;
+    }
+  }
+
+  &__buttons {
+    .button + .button {
+      margin-top: 10px;
+    }
+  }
+}

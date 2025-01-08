@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/robbyklein/swole/config"
@@ -12,27 +13,29 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		// Retrieve the auth session
 		authSession, err := initializers.Store.Get(r, config.AUTH_SESSION_KEY)
 		if err != nil {
-			// Redirect to login if the auth session is not retrievable
-			setFlashMessage(w, r, "You must be logged in to access that page")
-			http.Redirect(w, r, "/login", http.StatusTemporaryRedirect)
+			redirectToLoginWithMessage(w, r, "You must be logged in to access that page")
 			return
 		}
 
 		// Check if the user_id exists in the auth session
-		userID, ok := authSession.Values[config.USER_ID_KEY]
-		if !ok || userID == nil {
-			// Set a flash message in the flash session
-			setFlashMessage(w, r, "You must be logged in to access that page")
-			http.Redirect(w, r, "/login", http.StatusTemporaryRedirect)
+		userID, ok := authSession.Values[config.USER_ID_KEY].(int64)
+		if !ok || userID == 0 {
+			redirectToLoginWithMessage(w, r, "You must be logged in to access that page")
 			return
 		}
 
-		// User is authenticated, proceed to the next handler
-		next.ServeHTTP(w, r)
+		// Attach userID to the request context
+		ctx := context.WithValue(r.Context(), config.UserIDContextKey, userID)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
-// Helper function to set a flash message in the flash session
+func redirectToLoginWithMessage(w http.ResponseWriter, r *http.Request, message string) {
+	// Set a flash message and redirect to the login page
+	setFlashMessage(w, r, message)
+	http.Redirect(w, r, "/login", http.StatusTemporaryRedirect)
+}
+
 func setFlashMessage(w http.ResponseWriter, r *http.Request, message string) {
 	// Retrieve the flash session
 	flashSession, err := initializers.Store.Get(r, config.OTHER_SESSION_KEY)

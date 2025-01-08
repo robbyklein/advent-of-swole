@@ -1,0 +1,30 @@
+.button {
+  border: 1px solid transparent;
+  display: inline-flex;
+  font-weight: 500;
+  justify-content: center;
+  align-items: center;
+  column-gap: 8px;
+  line-height: 46px;
+  border-radius: $radius;
+
+  &--full-width {
+    display: flex;
+    width: 100%;
+  }
+
+  &--primary {
+    border-color: $primary;
+    background-color: $primary;
+    color: $primaryText;
+  }
+
+  &--secondary {
+    border: 1px solid $fieldBorder;
+    border-radius: $radius;
+    color: $text;
+  }
+
+  &--line {
+  }
+}

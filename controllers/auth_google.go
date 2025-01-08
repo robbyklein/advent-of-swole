@@ -13,7 +13,6 @@ import (
 func GoogleGET(w http.ResponseWriter, r *http.Request) {
 	// Create or retrieve the session
 	session, err := initializers.Store.Get(r, config.AUTH_SESSION_KEY)
-
 	if err != nil {
 		http.Error(w, "Could not get session", http.StatusInternalServerError)
 		return
@@ -24,7 +23,6 @@ func GoogleGET(w http.ResponseWriter, r *http.Request) {
 
 	// Save it in the session
 	session.Values[config.GOOGLE_STATE_KEY] = state
-
 	if err := session.Save(r, w); err != nil {
 		http.Error(w, "Could not save session", http.StatusInternalServerError)
 		return
@@ -40,7 +38,6 @@ func GoogleGET(w http.ResponseWriter, r *http.Request) {
 func GoogleCallbackGET(w http.ResponseWriter, r *http.Request) {
 	// Get the session
 	session, err := initializers.Store.Get(r, config.AUTH_SESSION_KEY)
-
 	if err != nil {
 		http.Error(w, "Could not get session", http.StatusInternalServerError)
 		return
@@ -50,10 +47,8 @@ func GoogleCallbackGET(w http.ResponseWriter, r *http.Request) {
 	code := r.URL.Query().Get("code")
 	returnedState := r.URL.Query().Get("state")
 
-	// Get the saved session state
-	savedState, ok := session.Values[config.GOOGLE_STATE_KEY].(string)
-
 	// Verify state matches
+	savedState, ok := session.Values[config.GOOGLE_STATE_KEY].(string)
 	if !ok || savedState == "" || savedState != returnedState {
 		http.Error(w, "Invalid state parameter", http.StatusBadRequest)
 		return
@@ -62,7 +57,6 @@ func GoogleCallbackGET(w http.ResponseWriter, r *http.Request) {
 	// Exchange the code for a token
 	ctx := r.Context()
 	token, err := initializers.GoogleOauthConfig.Exchange(ctx, code)
-
 	if err != nil {
 		http.Error(w, "Could not exchange code for token: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -70,7 +64,6 @@ func GoogleCallbackGET(w http.ResponseWriter, r *http.Request) {
 
 	// Extract the ID token
 	idToken, ok := token.Extra("id_token").(string)
-
 	if !ok {
 		http.Error(w, "Could not extract ID token", http.StatusInternalServerError)
 		return
@@ -78,37 +71,41 @@ func GoogleCallbackGET(w http.ResponseWriter, r *http.Request) {
 
 	// Decode and validate the ID token to extract user info
 	claims, err := helpers.VerifyGoogleIDToken(idToken)
-
 	if err != nil {
 		http.Error(w, "Could not verify ID token: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Extract user identifier
-	userID := claims["sub"].(string)
-	provider := "google"
-
-	// Retrieve or create the user in the database
-	user, err := db.GetOrCreateUser(provider, userID)
-	if err != nil {
-		http.Error(w, "Could not create or retrieve user: "+err.Error(), http.StatusInternalServerError)
+	// Grab the provider id
+	userID, userIDExists := claims["sub"].(string)
+	if !userIDExists {
+		http.Error(w, "User ID not found in ID token", http.StatusInternalServerError)
 		return
 	}
 
-	// Create a settings row for the user
+	// Grab their email address
+	email, emailExists := claims["email"].(string)
+	if !emailExists {
+		http.Error(w, "Email address not found in ID token", http.StatusInternalServerError)
+		return
+	}
+
+	// Generate a display name
 	displayName := helpers.GenerateDisplayName()
+
+	// Guess the users timezone
 	timezone := helpers.GuessTimezone(r)
 
-	_, err = db.CreateSettings(user.ID, timezone, displayName)
+	// Retrieve or create the user
+	user, err := db.GetOrCreateUser(ctx, "google", userID, email, timezone, displayName)
 	if err != nil {
-		http.Error(w, "Could not create settings for user: "+err.Error(), http.StatusInternalServerError)
+		http.Error(w, "User retrieval/creation failed: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	// Store user information in the session
 	session.Values[config.USER_ID_KEY] = user.ID
-	session.Values[config.PROVIDER_KEY] = provider
-
+	session.Values[config.PROVIDER_KEY] = "google"
 	if err := session.Save(r, w); err != nil {
 		http.Error(w, "Could not save session", http.StatusInternalServerError)
 		return

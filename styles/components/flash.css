@@ -1,7 +1,0 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-.flash {
-  @apply bg-zinc-600 text-center py-2 text-xs;
-}

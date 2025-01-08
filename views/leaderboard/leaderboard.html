@@ -1,0 +1,37 @@
+{{ define "leaderboard" }}
+  {{ template "head" . }}
+  {{ template "header" . }}
+
+  <main>
+    <div class="width">
+      <table>
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Name</th>
+                <th>Points</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range $index, $entry := .Leaderboard}}
+            <tr>
+                <!-- Add 1 to $index to start ranks from 1 -->
+                <td>{{ add $index 1 }}</td>
+                <!-- Render the user's display name -->
+                <td>{{ .DisplayName }}</td>
+                <!-- Render the user's total points -->
+                <td>{{ .TotalPoints }}</td>
+            </tr>
+            {{else}}
+            <tr>
+                <td colspan="3">No entries found</td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+    </div>
+  </main>
+
+  {{ template "footer" . }}
+  {{ template "foot" . }}
+{{ end }}

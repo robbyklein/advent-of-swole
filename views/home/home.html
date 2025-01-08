@@ -3,24 +3,33 @@
   {{ template "header" . }}
 
   <main class="py-8">
-    <div class="width width--flex">
+    <div class="width">
 
       <header class="home-header">
+        <img src="/images/ornaments.svg"/>
         <h1>
           <small>Welcome to the {{ .Annual }} annual</small>
           Advent of Swole
         </h1>
+        <p>
+          Next day in  <span id="countdown" data-hours="{{.HoursUntilNextDay}}" data-minutes="{{.MinutesUntilNextDay}}" data-seconds="{{.SecondsUntilNextDay}}">
+          {{printf "%02d:%02d:%02d" .HoursUntilNextDay .MinutesUntilNextDay .SecondsUntilNextDay}}</span>
+        </p>
       </header>
 
       <div class="home-grid">
         {{ range .Days }}
           {{ if .Active }}
-            <a href="/day/{{ $.Year }}-{{ $.Month }}-{{ .Number }}" class="home-grid__item">
-              {{ .Number }}
+            <a href="/day/{{ $.Year }}-{{ $.Month }}-{{ .Number }}" class="home-grid-item home-grid-item--enabled">
+              <h3>{{ $.MonthFull }}  {{ .Ordinal }}</h3>
+              <h4>{{ .Number }}</h4>
+              <span class="home-grid__item-circle"></span>
             </a>
           {{ else }}
-            <div class="home-grid__item">
-              {{ .Number }}
+            <div class="home-grid-item home-grid-item--disabled">
+              <h3>{{ $.MonthFull }} {{ .Number }}</h3>
+              <h4>{{ .Number }}</h4>
+              <span class="home-grid__item-circle"></span>
             </div>
           {{ end }}
 

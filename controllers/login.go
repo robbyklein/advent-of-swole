@@ -11,5 +11,4 @@ func LoginGET(w http.ResponseWriter, r *http.Request) {
 	}
 
 	RenderTemplate(w, r, "login", data)
-
 }

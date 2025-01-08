@@ -7,6 +7,9 @@
     "tailwindcss": "^3.4.17"
   },
   "scripts": {
-    "css": "npx tailwindcss -i ./styles/style.css -o ./public/style.css --watch"
+    "css": "sass --watch ./styles/style.scss:./public/style.css"
+  },
+  "dependencies": {
+    "sass": "^1.83.1"
   }
 }

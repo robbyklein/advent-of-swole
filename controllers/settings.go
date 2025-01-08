@@ -5,6 +5,7 @@ import (
 
 	"github.com/robbyklein/swole/config"
 	"github.com/robbyklein/swole/db"
+	"github.com/robbyklein/swole/helpers"
 	"github.com/robbyklein/swole/initializers"
 	"github.com/robbyklein/swole/sqlc"
 )
@@ -25,7 +26,7 @@ func SettingsGET(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Fetch the user's settings from the database
-	settings, err := db.Queries.GetSettings(r.Context(), userID)
+	user, err := db.Queries.GetUser(r.Context(), userID)
 	if err != nil {
 		http.Error(w, "Could not retrieve user settings: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -35,8 +36,8 @@ func SettingsGET(w http.ResponseWriter, r *http.Request) {
 	data := map[string]interface{}{
 		"PageTitle":   "Settings",
 		"BodyClass":   "settings",
-		"DisplayName": settings.DisplayName,
-		"Timezone":    settings.Timezone,
+		"DisplayName": user.DisplayName,
+		"Timezone":    user.Timezone,
 		"IsLoggedIn":  true,
 		"UserID":      userID,
 		"Provider":    authSession.Values[config.PROVIDER_KEY],
@@ -47,17 +48,10 @@ func SettingsGET(w http.ResponseWriter, r *http.Request) {
 }
 
 func SettingsPOST(w http.ResponseWriter, r *http.Request) {
-	// Retrieve the auth session
-	authSession, err := initializers.Store.Get(r, config.AUTH_SESSION_KEY)
-	if err != nil {
-		http.Error(w, "Could not retrieve auth session", http.StatusInternalServerError)
-		return
-	}
-
-	// Get the user ID from the session
-	userID, ok := authSession.Values[config.USER_ID_KEY].(int64)
-	if !ok {
-		http.Redirect(w, r, "/login", http.StatusTemporaryRedirect)
+	// Retrieve user
+	user, loggedIn := helpers.GetAuthenticatedUser(r)
+	if !loggedIn {
+		http.Error(w, "Must be logged in", http.StatusBadRequest)
 		return
 	}
 
@@ -89,30 +83,20 @@ func SettingsPOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Update the user's settings in the database
-	err = db.Queries.UpdateSettings(r.Context(), sqlc.UpdateSettingsParams{
-		UserID:      userID,
-		DisplayName: displayName,
+	// Update the user
+	err := db.Queries.UpdateUser(db.CTX, sqlc.UpdateUserParams{
+		ID:          user.ID,
 		Timezone:    timezone,
+		DisplayName: displayName,
 	})
+
 	if err != nil {
 		http.Error(w, "Could not update user settings: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	// Retrieve the flash session
-	flashSession, err := initializers.Store.Get(r, config.OTHER_SESSION_KEY)
-	if err != nil {
-		http.Error(w, "Could not get flash session", http.StatusInternalServerError)
-		return
-	}
-
-	// Add the flash message
-	flashSession.Values[config.FLASH_MESSAGE_KEY] = "Settings saved successfully!"
-	if err := flashSession.Save(r, w); err != nil {
-		http.Error(w, "Could not save flash message", http.StatusInternalServerError)
-		return
-	}
+	helpers.SetFlashMessage(r, w, "Settings saved successfully!")
 
 	// Redirect back to the settings page with a success message
 	http.Redirect(w, r, "/", http.StatusSeeOther)

@@ -26,6 +26,13 @@ func init() {
 }
 
 func main() {
+	// scripts.PopulateDatabase()
+
+	// err := scripts.CreateRandomChallengeMonth(2025, 1) // year=2025, month=1
+	// if err != nil {
+	// 	fmt.Printf("Failed to create random challenge month: %v\n", err)
+	// }
+
 	// Setup router
 	router := chi.NewRouter()
 
@@ -40,20 +47,27 @@ func main() {
 	})
 
 	// Public routes
-	router.Get("/", controllers.HomeGET)
-	router.Get("/login", controllers.LoginGET)
-	router.Get("/logout", controllers.LogoutGET)
-	router.Get("/auth/google", controllers.GoogleGET)
-	router.Get("/auth/google/callback", controllers.GoogleCallbackGET)
-	router.Get("/auth/apple", controllers.AppleGET)
-	router.Get("/auth/apple/callback", controllers.AppleCallbackGET)
+	router.Group(func(r chi.Router) {
+		r.Use(middle.OptionalAuthMiddleware)
 
-	// Protected outes
+		r.Get("/", controllers.HomeGET)
+		r.Get("/leaderboard", controllers.LeaderboardGET)
+		r.Get("/day/{year}-{month}-{dayNumber}", controllers.DayGET)
+		r.Get("/login", controllers.LoginGET)
+		r.Get("/logout", controllers.LogoutGET)
+		r.Get("/auth/google", controllers.GoogleGET)
+		r.Get("/auth/google/callback", controllers.GoogleCallbackGET)
+		r.Get("/auth/apple", controllers.AppleGET)
+		r.Post("/auth/apple/callback", controllers.AppleCallbackPOST)
+	})
+
+	// Protected routes
 	router.Group(func(r chi.Router) {
 		r.Use(middle.AuthMiddleware)
 
 		r.Get("/settings", controllers.SettingsGET)
 		r.Post("/settings", controllers.SettingsPOST)
+		r.Post("/challenge/complete", controllers.CompleteChallengePOST)
 	})
 
 	// Start

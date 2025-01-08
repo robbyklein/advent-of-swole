@@ -5,17 +5,11 @@ import (
 	"time"
 
 	"github.com/robbyklein/swole/config"
+	"github.com/robbyklein/swole/helpers"
 	"github.com/robbyklein/swole/initializers"
 )
 
 func RenderTemplate(w http.ResponseWriter, r *http.Request, templateName string, data map[string]interface{}) {
-	// Retrieve the auth session
-	authSession, err := initializers.Store.Get(r, config.AUTH_SESSION_KEY)
-	if err != nil {
-		http.Error(w, "Could not retrieve auth session", http.StatusInternalServerError)
-		return
-	}
-
 	// Retrieve the flash session
 	flashSession, err := initializers.Store.Get(r, config.OTHER_SESSION_KEY)
 	if err != nil {
@@ -23,14 +17,13 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, templateName string,
 		return
 	}
 
-	// Create data if needed
+	// Initialize the data map if it's nil
 	if data == nil {
 		data = make(map[string]interface{})
 	}
 
-	// Check for a flash message in the flash session
+	// Add flash message to the data map if it exists
 	if flashMessage, ok := flashSession.Values[config.FLASH_MESSAGE_KEY].(string); ok && flashMessage != "" {
-		// Set the flash message in the data map
 		data[config.FLASH_MESSAGE_KEY] = flashMessage
 
 		// Clear the flash message
@@ -41,18 +34,17 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, templateName string,
 		}
 	}
 
-	// Check if the user is logged in in the auth session
-	if userID, ok := authSession.Values[config.USER_ID_KEY]; ok {
+	// Retrieve userID from the context
+	if userID, ok := helpers.GetAuthenticatedUserID(r); ok {
+		// User is logged in, add user-related data
 		data["IsLoggedIn"] = true
 		data["UserID"] = userID
-		if provider, ok := authSession.Values[config.PROVIDER_KEY]; ok {
-			data["Provider"] = provider
-		}
 	} else {
+		// User is not logged in
 		data["IsLoggedIn"] = false
 	}
 
-	// Add the current year for footer
+	// Add the current year for the footer
 	data["Year"] = time.Now().In(initializers.Location).Year()
 
 	// Render the template
