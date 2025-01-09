@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/robbyklein/swole/config"
+	"github.com/robbyklein/swole/db"
 	"github.com/robbyklein/swole/initializers"
 )
 
@@ -24,8 +25,15 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		// Attach userID to the request context
-		ctx := context.WithValue(r.Context(), config.UserIDContextKey, userID)
+		// Fetch the user object from the database or service
+		user, err := db.Queries.GetUser(db.CTX, userID)
+		if err != nil {
+			redirectToLoginWithMessage(w, r, "Failed to retrieve user information")
+			return
+		}
+
+		// Attach the user object to the request context
+		ctx := context.WithValue(r.Context(), config.UserContextKey, user)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

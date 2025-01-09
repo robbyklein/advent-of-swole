@@ -36,7 +36,7 @@ body {
   font-size: 16px;
   font-weight: 400;
   line-height: 1.65;
-  background-color: #f6ede9;
+  background-color: #f6f6f6;
   color: #0c0c0c;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   text-rendering: optimizeLegibility;
@@ -97,6 +97,10 @@ svg {
   max-width: 100%;
 }
 
+.hidden {
+  display: none;
+}
+
 .width {
   max-width: 1140px;
   margin: 0 auto;
@@ -117,6 +121,7 @@ svg {
   column-gap: 8px;
   line-height: 46px;
   border-radius: 6px;
+  padding: 0 24px;
 }
 .button--full-width {
   display: flex;
@@ -128,9 +133,14 @@ svg {
   color: white;
 }
 .button--secondary {
-  border: 1px solid #c5bfbc;
+  border: 1px solid #c5c5c5;
   border-radius: 6px;
   color: #0c0c0c;
+}
+.button--small {
+  line-height: 32px;
+  font-size: 14px;
+  padding: 0 12px;
 }
 .box {
   border: 1px solid grey;
@@ -152,6 +162,20 @@ svg {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+.header__navs {
+  display: inline-flex;
+  align-items: center;
+  gap: 30px;
+}
+.header__nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 30px;
+}
+.header__nav a {
+  color: #fff;
+  font-weight: 500;
 }
 
 .header-logo {
@@ -175,14 +199,62 @@ svg {
   border-radius: 3px;
 }
 
-.header__nav {
+.header-user__relative {
+  position: relative;
+  height: 28px;
+}
+.header-user__gravatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+}
+.header-user__trigger {
   display: inline-flex;
   align-items: center;
-  gap: 30px;
 }
-.header__nav a {
-  color: #fff;
-  font-weight: 500;
+.header-user__trigger svg {
+  transition: 0.15s transform;
+}
+#header-user:checked ~ .header-user__trigger svg {
+  transform: rotate(180deg);
+}
+.header-user__dropdown {
+  background: #fff;
+  width: 200px;
+  position: absolute;
+  top: 100%;
+  right: 9999px;
+  opacity: 0;
+  border-radius: 9px;
+  padding: 12px 16px;
+  font-size: 16px;
+  margin-top: 12px;
+  z-index: 10;
+  box-shadow: 0px 8px 8px rgba(0, 0, 0, 0.1);
+  transition: right 0s 0.15s, opacity 0.15s, transform 0.15s;
+  transform: translateY(5px);
+}
+#header-user:checked ~ .header-user__dropdown {
+  opacity: 1;
+  right: -5px;
+  transform: none;
+  transition: right 0s, opacity 0.15s, transform 0.15s;
+}
+.header-user__dropdown:before {
+  z-index: -1;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 15px;
+  transform: rotate(45deg);
+  background: #fff;
+  margin-top: -4px;
+}
+.header-user__dropdown a {
+  color: #0c0c0c;
 }
 
 .flash {
@@ -219,8 +291,8 @@ svg {
 }
 .field input,
 .field select {
-  background: #fff6f2;
-  border: 1px solid #c5bfbc;
+  background: #f2f2f2;
+  border: 1px solid #c5c5c5;
   line-height: 46px;
   padding-left: 16px;
   padding-right: 16px;
@@ -233,6 +305,13 @@ svg {
   width: 100%;
   color: #0c0c0c;
   background: #fff;
+}
+.field input:disabled,
+.field select:disabled,
+.field textarea:disabled {
+  background: rgba(255, 255, 255, 0.3);
+  cursor: not-allowed;
+  user-select: none;
 }
 
 .login-fixed {
@@ -292,7 +371,7 @@ svg {
 .home-header h1 {
   font-size: 54px;
   font-weight: 500;
-  font-family: "DM Serif Text", sans-serif;
+  font-family: "Times New Roman", Times, Georgia, serif;
 }
 .home-header small {
   display: block;
@@ -335,8 +414,8 @@ svg {
   background-color: rgb(70, 113, 86);
 }
 .home-grid-item--disabled {
-  background-color: #d4c8c3;
-  color: rgb(115, 109, 104);
+  background-color: #d5d5d5;
+  color: rgb(117, 117, 117);
 }
 .home-grid-item h3 {
   font-size: 16px;
@@ -359,14 +438,70 @@ svg {
   font-size: 1.875rem; /* equivalent to text-3xl */
   font-weight: 600; /* equivalent to font-semibold */
 }
+.settings__avatar {
+  max-width: 120px;
+  margin: 32px auto;
+  position: relative;
+}
+.settings__avatar,
+.settings__avatar img {
+  border-radius: 50%;
+}
+.settings__avatar-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  gap: 4px;
+  opacity: 0;
+  transition: 0.15s opacity;
+}
+.settings__avatar-overlay:hover {
+  opacity: 1;
+}
+.settings__avatar-overlay svg {
+  width: 18px;
+}
 .settings__form {
-  margin-top: 2rem; /* equivalent to mt-8 */
   margin-left: auto;
   margin-right: auto;
-  max-width: 28rem; /* equivalent to max-w-md */
+  max-width: 360px;
 }
 .settings__form > * + * {
-  margin-top: 1.25rem; /* equivalent to space-y-5 */
+  margin-top: 20px;
+}
+
+.day-header {
+  margin-bottom: 32px;
+}
+.day-header h1 {
+  text-align: center;
+  font-family: "Times New Roman", Times, Georgia, serif;
+}
+.day-header h1 small {
+  display: block;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+.day main {
+  padding: 48px 0;
+}
+.day__challenges {
+  display: flex;
+  gap: 24px;
+}
+
+.challenge-card {
+  background: #fff;
+  flex: 1;
+  border-radius: 9px;
 }
 
 /*# sourceMappingURL=style.css.map */

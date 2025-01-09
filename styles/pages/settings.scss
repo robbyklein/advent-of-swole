@@ -10,13 +10,49 @@
     }
   }
 
+  &__avatar {
+    max-width: 120px;
+    margin: 32px auto;
+    position: relative;
+
+    &,
+    img {
+      border-radius: 50%;
+    }
+  }
+
+  &__avatar-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $darkText;
+    gap: 4px;
+    opacity: 0;
+    transition: 0.15s opacity;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    svg {
+      width: 18px;
+    }
+  }
+
   &__form {
-    margin-top: 2rem; /* equivalent to mt-8 */
     margin-left: auto;
     margin-right: auto;
-    max-width: 28rem; /* equivalent to max-w-md */
+    max-width: 360px;
+
     > * + * {
-      margin-top: 1.25rem; /* equivalent to space-y-5 */
+      margin-top: 20px;
     }
   }
 }

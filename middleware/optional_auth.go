@@ -2,26 +2,34 @@ package middleware
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/robbyklein/swole/config"
+	"github.com/robbyklein/swole/db"
 	"github.com/robbyklein/swole/initializers"
 )
 
 func OptionalAuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Retrieve the auth session
+		// Get the auth session
 		authSession, err := initializers.Store.Get(r, config.AUTH_SESSION_KEY)
 		if err == nil {
-			// Check if the user_id exists in the auth session
+			// Get the user id
 			if userID, ok := authSession.Values[config.USER_ID_KEY].(int64); ok && userID != 0 {
-				// Attach userID to the request context
-				ctx := context.WithValue(r.Context(), config.UserIDContextKey, userID)
-				r = r.WithContext(ctx)
+				// Get the user
+				user, err := db.Queries.GetUser(db.CTX, userID)
+				if err == nil {
+					// Attach to context
+					ctx := context.WithValue(r.Context(), config.UserContextKey, user)
+					r = r.WithContext(ctx)
+				} else {
+					fmt.Printf("Error retrieving user: %v\n", err)
+				}
 			}
+		} else {
+			fmt.Printf("Error retrieving session: %v\n", err)
 		}
-
-		// Proceed to the next handler
 		next.ServeHTTP(w, r)
 	})
 }

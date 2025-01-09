@@ -46,10 +46,10 @@ textarea {
   font-size: 16px;
 }
 
-input[type="email"],
-input[type="text"],
-input[type="password"],
-input[type="search"] {
+input[type='email'],
+input[type='text'],
+input[type='password'],
+input[type='search'] {
   display: block;
   width: 100%;
 }
@@ -57,9 +57,9 @@ input[type="search"] {
 a,
 button,
 label,
-input[type="submit"],
-input[type="checkbox"],
-input[type="radio"] {
+input[type='submit'],
+input[type='checkbox'],
+input[type='radio'] {
   cursor: pointer;
 }
 

@@ -34,11 +34,8 @@ RETURNING id, oauth_provider, oauth_provider_id, email, timezone, display_name, 
 -- name: UpdateUser :exec
 UPDATE users
 SET
-  oauth_provider = $2,
-  oauth_provider_id = $3,
-  email = $4,
-  timezone = $5,
-  display_name = $6,
+  timezone = $2,
+  display_name = $3,
   updated_at = NOW()
 WHERE id = $1;
 

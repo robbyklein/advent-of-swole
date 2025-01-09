@@ -155,32 +155,19 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 const updateUser = `-- name: UpdateUser :exec
 UPDATE users
 SET
-  oauth_provider = $2,
-  oauth_provider_id = $3,
-  email = $4,
-  timezone = $5,
-  display_name = $6,
+  timezone = $2,
+  display_name = $3,
   updated_at = NOW()
 WHERE id = $1
 `
 
 type UpdateUserParams struct {
-	ID              int64
-	OauthProvider   string
-	OauthProviderID string
-	Email           string
-	Timezone        string
-	DisplayName     string
+	ID          int64
+	Timezone    string
+	DisplayName string
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
-	_, err := q.db.Exec(ctx, updateUser,
-		arg.ID,
-		arg.OauthProvider,
-		arg.OauthProviderID,
-		arg.Email,
-		arg.Timezone,
-		arg.DisplayName,
-	)
+	_, err := q.db.Exec(ctx, updateUser, arg.ID, arg.Timezone, arg.DisplayName)
 	return err
 }

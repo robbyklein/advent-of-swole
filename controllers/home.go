@@ -1,16 +1,19 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
+	"github.com/robbyklein/swole/config"
 	"github.com/robbyklein/swole/db"
 	"github.com/robbyklein/swole/helpers"
+	"github.com/robbyklein/swole/sqlc"
 )
 
 func HomeGET(w http.ResponseWriter, r *http.Request) {
 	// Fetch the user
-	user, _ := helpers.GetAuthenticatedUser(r)
+	user, _ := r.Context().Value(config.UserContextKey).(sqlc.User)
 
 	// Determine user's timezone
 	userTZ := helpers.GetUserTimezone(user)
@@ -18,6 +21,10 @@ func HomeGET(w http.ResponseWriter, r *http.Request) {
 	// Get the current time in the user's timezone
 	currentTime := time.Now().In(userTZ)
 	currentYear, currentMonth, currentDay := currentTime.Date()
+
+	fmt.Println(userTZ)
+	fmt.Println("CurrentTime")
+	fmt.Println(currentTime)
 
 	// Fetch the most recent challenge month
 	cm, err := db.Queries.GetMostRecentChallengeMonth(db.CTX)

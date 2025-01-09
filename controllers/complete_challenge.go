@@ -5,16 +5,17 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/robbyklein/swole/config"
 	"github.com/robbyklein/swole/db"
 	"github.com/robbyklein/swole/helpers"
 	"github.com/robbyklein/swole/sqlc"
 )
 
 func CompleteChallengePOST(w http.ResponseWriter, r *http.Request) {
-	// Retrieve the authenticated user
-	user, ok := helpers.GetAuthenticatedUser(r)
+	user, ok := r.Context().Value(config.UserContextKey).(sqlc.User)
+
 	if !ok {
-		http.Error(w, "Unauthorized: You must be logged in to complete a challenge", http.StatusUnauthorized)
+		http.Error(w, "Must be logged in", http.StatusInternalServerError)
 		return
 	}
 

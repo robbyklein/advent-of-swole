@@ -3,41 +3,63 @@
   {{ template "header" . }}
 
   <main>
-    <div class="width width--fixed">
-        <h1>Challenge for Day {{ .DayNumber }} in {{ .Year }}-{{ .Month }}</h1>
+    <div class="width">
 
-        {{ if .Challenges }}
-          <ul>
-            {{ range .Challenges }}
-              <li>
-                <strong>{{ .Description }}</strong>
-                <p>Category: {{ .Category }}</p>
-                <p>Difficulty: {{ .Difficulty }}</p>
-                <p>Muscle Groups: {{ .MuscleGroups }}</p>
+      <header class="day-header">
+        <h1>
+          <small>{{ .Month }} {{ .Year }}</small>
+          Day #{{ .DayNumber }}
+        </h1>
+      </header>
 
-                {{ if $.IsCurrentDay }}
-                  {{ if $.IsLoggedIn }}
-                    {{ if index $.CompletedMap .ID }}
-                      <p>Already Completed</p>
-                    {{ else }}
-                      <form method="POST" action="/challenge/complete">
-                        <input type="hidden" name="challenge_id" value="{{ .ID }}">
-                        <input type="hidden" name="day_id" value="{{ $.DayID }}">
-                        <button type="submit">Complete</button>
-                      </form>
-                    {{ end }}
+      {{ if .Challenges }}
+        <div class="day__challenges">
+          {{ $index := 0 }} <!-- Declare an index variable -->
+          {{ range .Challenges }}
+            <div class="challenge-card">
+              <header>
+                <h3>Challenge #{{ add $index 1 }}</h3> <!-- Display challenge number -->
+              </header>
+
+              <p>
+                {{ .Description }}
+              </p>
+
+              <div class="challenge-card__details">
+                <div class="challenge-card__details">
+                  {{ .Category }}
+                </div>
+                <div class="challenge-card__details">
+                  {{ .Difficulty }}
+                </div>
+                <div class="challenge-card__details">
+                  {{ .MuscleGroups }}
+                </div>
+              </div>
+
+              {{ if $.IsCurrentDay }}
+                {{ if $.User }}
+                  {{ if index $.CompletedMap .ID }}
+                    <p>Already Completed</p>
                   {{ else }}
-                    <p>Please log in to complete challenges.</p>
+                    <form method="POST" action="/challenge/complete">
+                      <input type="hidden" name="challenge_id" value="{{ .ID }}">
+                      <input type="hidden" name="day_id" value="{{ $.DayID }}">
+                      <button type="submit">Complete</button>
+                    </form>
                   {{ end }}
                 {{ else }}
-                  <p>Challenge available only on the correct day.</p>
+                  <p>Please log in to complete challenges.</p>
                 {{ end }}
-              </li>
-            {{ end }}
-          </ul>
-        {{ else }}
-          <p>No challenges found for this day.</p>
-        {{ end }}
+              {{ else }}
+                <p>Challenge available only on the correct day.</p>
+              {{ end }}
+
+            </div>
+            {{ $index = add $index 1 }} <!-- Increment the index -->
+          {{ end }}
+        </div>
+      {{ end }}
     </div>
   </main>
 

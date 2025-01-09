@@ -3,21 +3,43 @@
   <div class="width">
     <div class="header__inner">
 
+
+
       <a href="/" class="header-logo">
         {{ template "bicepIcon" . }}
         <span class="header-logo__text">Advent of Swole</span>
         <span class="header-logo__beta">Beta</span>
       </a>
 
-      <ul class="header__nav">
-        <li><a href="/leaderboard">Leaderboard</a></li>
+      <nav class="header__navs">
+        <ul class="header__nav">
+          <li><a href="/leaderboard">Leaderboard</a></li>
+          {{if not .IsLoggedIn}}
+            <li><a class="button button--primary button--small" href="/login">Login</a></li>
+          {{end}}
+        </ul>
+
         {{if .IsLoggedIn}}
-          <li><a href="/settings">Settings</a></li>
-          <li><a href="/logout">Logout</a></li>
-        {{else}}
-          <li><a href="/login">Login</a></li>
+          <div class="header-user">
+            <div class="header-user__relative">
+              <input class="hidden" type="checkbox" id="header-user">
+
+              <label class="header-user__trigger" for="header-user">
+                <img class="header-user__gravatar" src="{{ .Gravatar }}" alt="Gravatar for {{ .User.DisplayName }}">
+                {{ template "triangleDownIcon" . }}
+              </label>
+
+              <div class="header-user__dropdown">
+                <ul>
+                  <li><a href="/settings">Settings</a></li>
+                  <li><a href="/logout">Logout</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
         {{end}}
-      </ul>
+      </nav>
+
     </div>
   </div>
 </header>

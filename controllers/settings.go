@@ -6,52 +6,32 @@ import (
 	"github.com/robbyklein/swole/config"
 	"github.com/robbyklein/swole/db"
 	"github.com/robbyklein/swole/helpers"
-	"github.com/robbyklein/swole/initializers"
 	"github.com/robbyklein/swole/sqlc"
 )
 
 func SettingsGET(w http.ResponseWriter, r *http.Request) {
-	// Retrieve the auth session
-	authSession, err := initializers.Store.Get(r, config.AUTH_SESSION_KEY)
-	if err != nil {
-		http.Error(w, "Could not retrieve auth session", http.StatusInternalServerError)
-		return
-	}
+	user, ok := r.Context().Value(config.UserContextKey).(sqlc.User)
 
-	// Get the user ID from the session
-	userID, ok := authSession.Values[config.USER_ID_KEY].(int64)
 	if !ok {
-		http.Redirect(w, r, "/login", http.StatusTemporaryRedirect)
+		http.Error(w, "Must be logged in", http.StatusInternalServerError)
 		return
 	}
 
-	// Fetch the user's settings from the database
-	user, err := db.Queries.GetUser(r.Context(), userID)
-	if err != nil {
-		http.Error(w, "Could not retrieve user settings: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	// Pass settings data to the template
 	data := map[string]interface{}{
-		"PageTitle":   "Settings",
-		"BodyClass":   "settings",
-		"DisplayName": user.DisplayName,
-		"Timezone":    user.Timezone,
-		"IsLoggedIn":  true,
-		"UserID":      userID,
-		"Provider":    authSession.Values[config.PROVIDER_KEY],
-		"Timezones":   config.Timezones,
+		"PageTitle": "Settings",
+		"BodyClass": "settings",
+		"Timezone":  user.Timezone,
+		"Timezones": config.Timezones,
 	}
 
 	RenderTemplate(w, r, "settings", data)
 }
 
 func SettingsPOST(w http.ResponseWriter, r *http.Request) {
-	// Retrieve user
-	user, loggedIn := helpers.GetAuthenticatedUser(r)
-	if !loggedIn {
-		http.Error(w, "Must be logged in", http.StatusBadRequest)
+	user, ok := r.Context().Value(config.UserContextKey).(sqlc.User)
+
+	if !ok {
+		http.Error(w, "Must be logged in", http.StatusInternalServerError)
 		return
 	}
 

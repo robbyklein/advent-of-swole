@@ -25,6 +25,6 @@ func GetAuthenticatedUser(r *http.Request) (sqlc.User, bool) {
 }
 
 func GetAuthenticatedUserID(r *http.Request) (int64, bool) {
-	userID, ok := r.Context().Value(config.UserIDContextKey).(int64)
+	userID, ok := r.Context().Value(config.UserContextKey).(int64)
 	return userID, ok
 }

@@ -17,9 +17,15 @@ func GetUserTimezone(user sqlc.User) *time.Location {
 	}
 
 	// Load and return the user's specified timezone
-	userLocation, err := time.LoadLocation(user.Timezone)
-	if err != nil {
-		return defaultLocation
+	if user.ID != 0 {
+		userLocation, err := time.LoadLocation(user.Timezone)
+		if err != nil {
+			return defaultLocation
+		}
+
+		return userLocation
 	}
-	return userLocation
+
+	return defaultLocation
+
 }

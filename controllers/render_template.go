@@ -1,12 +1,14 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/robbyklein/swole/config"
 	"github.com/robbyklein/swole/helpers"
 	"github.com/robbyklein/swole/initializers"
+	"github.com/robbyklein/swole/sqlc"
 )
 
 func RenderTemplate(w http.ResponseWriter, r *http.Request, templateName string, data map[string]interface{}) {
@@ -34,13 +36,15 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, templateName string,
 		}
 	}
 
-	// Retrieve userID from the context
-	if userID, ok := helpers.GetAuthenticatedUserID(r); ok {
-		// User is logged in, add user-related data
+	// Retrieve user from the context
+	user, ok := r.Context().Value(config.UserContextKey).(sqlc.User)
+	if ok {
+		gravatar := helpers.GetGravatarURL(user.Email, 320)
+
+		data["Gravatar"] = gravatar
 		data["IsLoggedIn"] = true
-		data["UserID"] = userID
+		data["User"] = user
 	} else {
-		// User is not logged in
 		data["IsLoggedIn"] = false
 	}
 
@@ -50,6 +54,8 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, templateName string,
 	// Render the template
 	err = initializers.Templates.ExecuteTemplate(w, templateName, data)
 	if err != nil {
+		fmt.Printf("Error rendering template: %v\n", err)
 		http.Error(w, "Could not render template", http.StatusInternalServerError)
+		return
 	}
 }

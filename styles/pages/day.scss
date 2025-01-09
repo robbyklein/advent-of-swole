@@ -1,0 +1,30 @@
+.day-header {
+  margin-bottom: 32px;
+
+  h1 {
+    text-align: center;
+    font-family: $serif;
+
+    small {
+      display: block;
+      font-family: $sans;
+    }
+  }
+}
+
+.day {
+  main {
+    padding: 48px 0;
+  }
+
+  &__challenges {
+    display: flex;
+    gap: 24px;
+  }
+}
+
+.challenge-card {
+  background: $white;
+  flex: 1;
+  border-radius: $radiusLarge;
+}

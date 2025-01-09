@@ -24,4 +24,12 @@
     color: $text;
     background: $white;
   }
+
+  input:disabled,
+  select:disabled,
+  textarea:disabled {
+    background: rgba(255, 255, 255, 0.3);
+    cursor: not-allowed;
+    user-select: none;
+  }
 }

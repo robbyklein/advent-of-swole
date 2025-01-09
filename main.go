@@ -39,7 +39,7 @@ func main() {
 	// Middleware
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
-	router.Use(httprate.LimitByIP(50, 1*time.Minute))
+	router.Use(httprate.LimitByIP(100, 1*time.Minute))
 
 	// Serve static files
 	router.Get("/*", func(w http.ResponseWriter, r *http.Request) {

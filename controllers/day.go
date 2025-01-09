@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/robbyklein/swole/config"
 	"github.com/robbyklein/swole/db"
 	"github.com/robbyklein/swole/helpers"
 	"github.com/robbyklein/swole/sqlc"
@@ -61,7 +62,7 @@ func DayGET(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get the user
-	user, loggedIn := helpers.GetAuthenticatedUser(r)
+	user, loggedIn := r.Context().Value(config.UserContextKey).(sqlc.User)
 
 	// Determine if it's the current day in the user's timezone
 	userTZ := helpers.GetUserTimezone(user) // Helper to get user's timezone
@@ -101,18 +102,19 @@ func DayGET(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// Get the month name
+	monthName := time.Month(monthInt).String()
+
 	// Prepare data
 	data := map[string]interface{}{
 		"PageTitle":    "Day",
 		"BodyClass":    "day",
-		"Year":         yearInt,
-		"Month":        monthInt,
+		"Month":        monthName,
 		"DayNumber":    dayInt,
 		"DayID":        dayObj.ID,
 		"Challenges":   dayChallenges,
 		"CompletedMap": completedMap,
 		"IsCurrentDay": isCurrentDay,
-		"IsLoggedIn":   loggedIn,
 	}
 
 	// Render the template

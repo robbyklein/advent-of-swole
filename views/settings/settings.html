@@ -6,11 +6,24 @@
     <div class="width width--fixed">
       <div class="settings__inner">
         <h1>Settings</h1>
+        
+        <div class="settings__avatar">
+          <img src="{{ .Gravatar }}" alt="Gravatar for user">
+          <a href="https://en.gravatar.com/emails" class="settings__avatar-overlay">
+            {{ template "pencilIcon" . }}
+            <span>Edit</span>
+          </a>
+        </div>
 
         <form class="settings__form" method="POST" action="/settings">
           <div class="field">
+            <label for="email">Email address</label>
+            <input required id="email" value="{{ .User.Email }}"  type="text" name="email" readonly disabled />
+          </div>
+
+          <div class="field">
             <label for="displayName">Display name</label>
-            <input required id="displayName" value="{{ .DisplayName }}"  type="text" placeholder="JackedFool49" name="displayName" />
+            <input required id="displayName" value="{{ .User.DisplayName }}"  type="text" placeholder="JackedFool49" name="displayName" />
           </div>
 
           <div class="field">
