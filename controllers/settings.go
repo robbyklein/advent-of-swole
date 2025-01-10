@@ -19,7 +19,6 @@ func SettingsGET(w http.ResponseWriter, r *http.Request) {
 
 	data := map[string]interface{}{
 		"PageTitle": "Settings",
-		"BodyClass": "settings",
 		"Timezone":  user.Timezone,
 		"Timezones": config.Timezones,
 	}

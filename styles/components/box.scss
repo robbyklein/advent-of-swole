@@ -1,6 +1,7 @@
 .box {
-  border: 1px solid grey;
-  background: $white;
+  border: 1px solid $border;
+  background: $cardsBg;
   padding: 20px;
   border-radius: $radiusLarge;
+  box-shadow: $shadow;
 }

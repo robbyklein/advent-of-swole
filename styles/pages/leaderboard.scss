@@ -1,0 +1,43 @@
+.leaderboard__main {
+  padding: 48px 0;
+}
+
+.leaderboard__header {
+  margin-bottom: 32px;
+
+  h1 {
+    font-size: 32px;
+  }
+}
+
+.leaderboard__table {
+  width: 100%;
+  text-align: left;
+  background: $cardsBg;
+  border-radius: $radiusLarge;
+  box-shadow: $shadow;
+  border-collapse: collapse;
+
+  td {
+    border-top: 1px solid $border;
+    padding: 10px 20px;
+    vertical-align: middle;
+  }
+
+  th {
+    padding: 10px 20px;
+    text-transform: uppercase;
+    color: $xLightText;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 24px;
+  }
+
+  img {
+    width: 24px;
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: middle;
+    margin: -2px 5px 0 0;
+  }
+}

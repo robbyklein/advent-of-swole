@@ -1,0 +1,20 @@
+{{ define "homeGrid" }}
+  <div class="home-grid">
+    {{ range .Days }}
+      {{ if .Active }}
+        <a href="/day/{{ $.Year }}-{{ $.Month }}-{{ .Number }}" class="home-grid-item home-grid-item--enabled">
+          <h3>{{ $.MonthFull }}  {{ .Ordinal }}</h3>
+          <h4>{{ .Number }}</h4>
+          <span class="home-grid__item-circle"></span>
+        </a>
+      {{ else }}
+        <div class="home-grid-item home-grid-item--disabled">
+          <h3>{{ $.MonthFull }} {{ .Number }}</h3>
+          <h4>{{ .Number }}</h4>
+          <span class="home-grid__item-circle"></span>
+        </div>
+      {{ end }}
+
+    {{ end }}
+  </div>
+{{ end }}

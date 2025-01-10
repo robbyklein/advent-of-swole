@@ -12,8 +12,9 @@ import (
 const getLeaderboard = `-- name: GetLeaderboard :many
 SELECT 
   u.id AS user_id,
-  u.display_name::TEXT AS display_name, -- Use the display_name field from the users table
-  COALESCE(SUM(c.points), 0) AS total_points
+  u.display_name::TEXT AS display_name,
+  u.email::TEXT AS email,
+  COALESCE(SUM(c.points), 0)::INTEGER AS total_points
 FROM 
   users u
 LEFT JOIN 
@@ -21,7 +22,7 @@ LEFT JOIN
 LEFT JOIN 
   challenges c ON ucc.challenge_id = c.id
 GROUP BY 
-  u.id, u.display_name
+  u.id, u.display_name, u.email
 ORDER BY 
   total_points DESC
 LIMIT $1
@@ -30,7 +31,8 @@ LIMIT $1
 type GetLeaderboardRow struct {
 	UserID      int64
 	DisplayName string
-	TotalPoints interface{}
+	Email       string
+	TotalPoints int32
 }
 
 func (q *Queries) GetLeaderboard(ctx context.Context, limit int32) ([]GetLeaderboardRow, error) {
@@ -42,7 +44,12 @@ func (q *Queries) GetLeaderboard(ctx context.Context, limit int32) ([]GetLeaderb
 	var items []GetLeaderboardRow
 	for rows.Next() {
 		var i GetLeaderboardRow
-		if err := rows.Scan(&i.UserID, &i.DisplayName, &i.TotalPoints); err != nil {
+		if err := rows.Scan(
+			&i.UserID,
+			&i.DisplayName,
+			&i.Email,
+			&i.TotalPoints,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

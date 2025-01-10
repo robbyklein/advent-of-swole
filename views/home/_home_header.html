@@ -1,0 +1,14 @@
+{{ define "homeHeader" }}
+  <header class="home-header">
+    <img src="/images/ornaments.svg"/>
+    
+    <h1>
+      <small>Welcome to the {{ .Annual }} annual</small>
+      Advent of Swole
+    </h1>
+    <p>
+      Next day in  <span id="countdown" data-hours="{{.HoursUntilNextDay}}" data-minutes="{{.MinutesUntilNextDay}}" data-seconds="{{.SecondsUntilNextDay}}">
+      {{printf "%02d:%02d:%02d" .HoursUntilNextDay .MinutesUntilNextDay .SecondsUntilNextDay}}</span>
+    </p>
+  </header>
+{{ end }}

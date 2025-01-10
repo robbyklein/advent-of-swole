@@ -1,8 +1,9 @@
 -- name: GetLeaderboard :many
 SELECT 
   u.id AS user_id,
-  u.display_name::TEXT AS display_name, -- Use the display_name field from the users table
-  COALESCE(SUM(c.points), 0) AS total_points
+  u.display_name::TEXT AS display_name,
+  u.email::TEXT AS email,
+  COALESCE(SUM(c.points), 0)::INTEGER AS total_points
 FROM 
   users u
 LEFT JOIN 
@@ -10,7 +11,7 @@ LEFT JOIN
 LEFT JOIN 
   challenges c ON ucc.challenge_id = c.id
 GROUP BY 
-  u.id, u.display_name
+  u.id, u.display_name, u.email
 ORDER BY 
   total_points DESC
 LIMIT $1;

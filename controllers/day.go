@@ -108,7 +108,6 @@ func DayGET(w http.ResponseWriter, r *http.Request) {
 	// Prepare data
 	data := map[string]interface{}{
 		"PageTitle":    "Day",
-		"BodyClass":    "day",
 		"Month":        monthName,
 		"DayNumber":    dayInt,
 		"DayID":        dayObj.ID,

@@ -1,11 +1,15 @@
-{{ define "day" }}
+{{ define "stats" }}
   {{ template "head" . }}
   {{ template "header" . }}
 
-  <main>
+  <main class="leaderboard__main">
     <div class="width">
-      {{ template "dayHeader" . }}
-      {{ template "dayChallenges" . }}
+
+      <div class="leaderboard__header">
+        <h1>Statistics</h1>
+      </div>
+
+
     </div>
   </main>
 

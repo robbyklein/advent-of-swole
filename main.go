@@ -65,6 +65,7 @@ func main() {
 	router.Group(func(r chi.Router) {
 		r.Use(middle.AuthMiddleware)
 
+		r.Get("/stats", controllers.StatsGET)
 		r.Get("/settings", controllers.SettingsGET)
 		r.Post("/settings", controllers.SettingsPOST)
 		r.Post("/challenge/complete", controllers.CompleteChallengePOST)

@@ -1,13 +1,18 @@
 .settings {
   &__inner {
-    padding-top: 3rem; /* equivalent to py-12 */
-    padding-bottom: 3rem;
+    padding-top: 48px;
+    padding-bottom: 48px;
 
     h1 {
       text-align: center;
-      font-size: 1.875rem; /* equivalent to text-3xl */
-      font-weight: 600; /* equivalent to font-semibold */
+      font-size: 32px;
+      font-weight: 600;
     }
+  }
+
+  &__box {
+    margin: 0 auto;
+    max-width: 440px;
   }
 
   &__avatar {
@@ -47,10 +52,6 @@
   }
 
   &__form {
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 360px;
-
     > * + * {
       margin-top: 20px;
     }

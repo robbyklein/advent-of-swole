@@ -2,9 +2,14 @@
   {{ template "head" . }}
   {{ template "header" . }}
 
-  <main>
+  <main class="leaderboard__main">
     <div class="width">
-      <table>
+
+      <div class="leaderboard__header">
+        <h1>Leaderboard</h1>
+      </div>
+
+      <table class="leaderboard__table">
         <thead>
             <tr>
                 <th>Rank</th>
@@ -15,11 +20,11 @@
         <tbody>
             {{range $index, $entry := .Leaderboard}}
             <tr>
-                <!-- Add 1 to $index to start ranks from 1 -->
                 <td>{{ add $index 1 }}</td>
-                <!-- Render the user's display name -->
-                <td>{{ .DisplayName }}</td>
-                <!-- Render the user's total points -->
+                <td>
+                  <img src="{{ .GravatarURL }}" alt="{{ .DisplayName }}'s avatar" />
+                  <span>{{ .DisplayName }}</span>
+                </td>
                 <td>{{ .TotalPoints }}</td>
             </tr>
             {{else}}
@@ -28,7 +33,8 @@
             </tr>
             {{end}}
         </tbody>
-    </table>
+      </table>
+
     </div>
   </main>
 

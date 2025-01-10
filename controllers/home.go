@@ -48,7 +48,6 @@ func HomeGET(w http.ResponseWriter, r *http.Request) {
 	// Prepare data
 	data := map[string]interface{}{
 		"PageTitle":           "Homepage",
-		"BodyClass":           "home",
 		"Days":                days,
 		"MonthFull":           currentMonth,
 		"Month":               cm.Month,

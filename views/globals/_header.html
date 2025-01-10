@@ -14,9 +14,12 @@
       <nav class="header__navs">
         <ul class="header__nav">
           <li><a href="/leaderboard">Leaderboard</a></li>
-          {{if not .IsLoggedIn}}
+
+          {{if .IsLoggedIn}}
+            <li><a href="/stats">Stats</a></li>  
+          {{ else }}
             <li><a class="button button--primary button--small" href="/login">Login</a></li>
-          {{end}}
+          {{ end }}
         </ul>
 
         {{if .IsLoggedIn}}

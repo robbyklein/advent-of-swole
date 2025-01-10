@@ -80,20 +80,21 @@
   }
 
   &__dropdown {
-    background: $white;
+    background: $cardsBg;
     width: 200px;
     position: absolute;
     top: 100%;
     right: 9999px;
     opacity: 0;
     border-radius: $radiusLarge;
-    padding: 12px 16px;
     font-size: 16px;
     margin-top: 12px;
     z-index: 10;
     box-shadow: $shadow;
     transition: $fadeOffR;
     transform: translateY(5px);
+    overflow: hidden;
+    padding: 7px 0;
 
     #header-user:checked ~ & {
       opacity: 1;
@@ -112,12 +113,19 @@
       top: 0;
       right: 15px;
       transform: rotate(45deg);
-      background: $white;
+      background: $cardsBg;
       margin-top: -4px;
     }
 
     a {
       color: $text;
+      display: block;
+      transition: 0.15s background-color;
+      padding: 5px 16px;
+
+      &:hover {
+        background: #eee;
+      }
     }
   }
 }

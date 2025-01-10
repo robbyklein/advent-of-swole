@@ -10,6 +10,8 @@
     font-size: 54px;
     font-weight: 500;
     font-family: $serif;
+    letter-spacing: -0.025em;
+    font-weight: 500;
   }
 
   small {
@@ -17,6 +19,7 @@
     font-weight: 400;
     font-size: 18px;
     font-family: $sans;
+    letter-spacing: initial;
   }
 
   p {
@@ -30,22 +33,27 @@
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 10px;
-  margin-bottom: 40px;
+  padding-bottom: 80px;
 }
 
 .home-grid-item {
   font-size: 24px;
   display: flex;
   flex-direction: column;
-  height: 240px;
+  height: 200px;
   border-radius: $radius;
   position: relative;
   overflow: hidden;
   padding: 20px 20px 0;
   justify-content: space-between;
+  transition: 0.15s transform;
+
+  &--enabled:hover {
+    transform: translateY(-3px);
+  }
 
   &--enabled {
-    color: $white;
+    color: $cardsBg;
 
     &:nth-child(3n + 1) {
       background-color: rgb(223, 64, 71);
@@ -75,6 +83,6 @@
     font-size: 150px;
     font-weight: 500;
     line-height: 1;
-    margin-bottom: -110px;
+    margin-bottom: -70px;
   }
 }
