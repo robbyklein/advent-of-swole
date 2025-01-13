@@ -15,23 +15,26 @@ INSERT INTO users (
   oauth_provider_id,
   email,
   timezone,
-  display_name
+  display_name,
+  measurement_system
 ) VALUES (
   $1,
   $2,
   $3,
   $4,
-  $5
+  $5,
+  $6
 )
-RETURNING id, oauth_provider, oauth_provider_id, email, timezone, display_name, created_at, updated_at
+RETURNING id, oauth_provider, oauth_provider_id, email, timezone, display_name, measurement_system, created_at, updated_at
 `
 
 type CreateUserParams struct {
-	OauthProvider   string
-	OauthProviderID string
-	Email           string
-	Timezone        string
-	DisplayName     string
+	OauthProvider     string
+	OauthProviderID   string
+	Email             string
+	Timezone          string
+	DisplayName       string
+	MeasurementSystem string
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
@@ -41,6 +44,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		arg.Email,
 		arg.Timezone,
 		arg.DisplayName,
+		arg.MeasurementSystem,
 	)
 	var i User
 	err := row.Scan(
@@ -50,6 +54,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.Email,
 		&i.Timezone,
 		&i.DisplayName,
+		&i.MeasurementSystem,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -67,7 +72,7 @@ func (q *Queries) DeleteUser(ctx context.Context, id int64) error {
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, oauth_provider, oauth_provider_id, email, timezone, display_name, created_at, updated_at
+SELECT id, oauth_provider, oauth_provider_id, email, timezone, display_name, measurement_system, created_at, updated_at
 FROM users
 WHERE id = $1
 LIMIT 1
@@ -83,6 +88,7 @@ func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {
 		&i.Email,
 		&i.Timezone,
 		&i.DisplayName,
+		&i.MeasurementSystem,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -90,7 +96,7 @@ func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {
 }
 
 const getUserByProviderId = `-- name: GetUserByProviderId :one
-SELECT id, oauth_provider, oauth_provider_id, email, timezone, display_name, created_at, updated_at
+SELECT id, oauth_provider, oauth_provider_id, email, timezone, display_name, measurement_system, created_at, updated_at
 FROM users
 WHERE oauth_provider = $1 AND oauth_provider_id = $2
 LIMIT 1
@@ -111,6 +117,7 @@ func (q *Queries) GetUserByProviderId(ctx context.Context, arg GetUserByProvider
 		&i.Email,
 		&i.Timezone,
 		&i.DisplayName,
+		&i.MeasurementSystem,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -118,7 +125,7 @@ func (q *Queries) GetUserByProviderId(ctx context.Context, arg GetUserByProvider
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT id, oauth_provider, oauth_provider_id, email, timezone, display_name, created_at, updated_at
+SELECT id, oauth_provider, oauth_provider_id, email, timezone, display_name, measurement_system, created_at, updated_at
 FROM users
 ORDER BY id
 `
@@ -139,6 +146,7 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 			&i.Email,
 			&i.Timezone,
 			&i.DisplayName,
+			&i.MeasurementSystem,
 			&i.CreatedAt,
 			&i.UpdatedAt,
 		); err != nil {
@@ -157,17 +165,24 @@ UPDATE users
 SET
   timezone = $2,
   display_name = $3,
+  measurement_system = $4,
   updated_at = NOW()
 WHERE id = $1
 `
 
 type UpdateUserParams struct {
-	ID          int64
-	Timezone    string
-	DisplayName string
+	ID                int64
+	Timezone          string
+	DisplayName       string
+	MeasurementSystem string
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
-	_, err := q.db.Exec(ctx, updateUser, arg.ID, arg.Timezone, arg.DisplayName)
+	_, err := q.db.Exec(ctx, updateUser,
+		arg.ID,
+		arg.Timezone,
+		arg.DisplayName,
+		arg.MeasurementSystem,
+	)
 	return err
 }

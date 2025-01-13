@@ -43,10 +43,15 @@ func SettingsPOST(w http.ResponseWriter, r *http.Request) {
 	// Extract and validate form values
 	displayName := r.FormValue("displayName")
 	timezone := r.FormValue("timezone")
+	measurementSystem := r.FormValue("measurementSystem")
 
 	if displayName == "" || timezone == "" {
 		http.Error(w, "Display name and timezone are required", http.StatusBadRequest)
 		return
+	}
+
+	if measurementSystem != "imperial" && measurementSystem != "metric" {
+		measurementSystem = "imperial"
 	}
 
 	// Check if the timezone is valid
@@ -64,9 +69,10 @@ func SettingsPOST(w http.ResponseWriter, r *http.Request) {
 
 	// Update the user
 	err := db.Queries.UpdateUser(db.CTX, sqlc.UpdateUserParams{
-		ID:          user.ID,
-		Timezone:    timezone,
-		DisplayName: displayName,
+		ID:                user.ID,
+		Timezone:          timezone,
+		DisplayName:       displayName,
+		MeasurementSystem: measurementSystem,
 	})
 
 	if err != nil {

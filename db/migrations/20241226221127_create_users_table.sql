@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS users (
   email             TEXT NOT NULL,
   timezone          TEXT NOT NULL,
   display_name      TEXT NOT NULL,
+  measurement_system      TEXT NOT NULL DEFAULT 'imperial',
   created_at        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at        TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

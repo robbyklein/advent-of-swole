@@ -3,6 +3,7 @@
 CREATE TABLE IF NOT EXISTS challenges (
   id                     BIGSERIAL PRIMARY KEY,
   description            TEXT NOT NULL UNIQUE,
+  description_metric     TEXT NOT NULL UNIQUE,
   category               TEXT NOT NULL,
   muscle_groups          TEXT[] NOT NULL,
   difficulty             INTEGER NOT NULL CHECK (difficulty BETWEEN 1 AND 5),

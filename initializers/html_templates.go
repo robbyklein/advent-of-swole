@@ -14,7 +14,8 @@ func LoadHTMLTemplates() {
 
 	// Initialize a new template with a function map
 	Templates = template.New("").Funcs(template.FuncMap{
-		"add": add,
+		"add":               add,
+		"selectDescription": selectDescription,
 	})
 
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
@@ -39,4 +40,11 @@ func LoadHTMLTemplates() {
 
 func add(a, b int) int {
 	return a + b
+}
+
+func selectDescription(measurementSystem, description, descriptionMetric string) string {
+	if measurementSystem == "metric" {
+		return descriptionMetric
+	}
+	return description
 }

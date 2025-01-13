@@ -18,6 +18,7 @@ ORDER BY id;
 -- name: CreateChallenge :one
 INSERT INTO challenges (
   description,
+  description_metric,
   category,
   muscle_groups,
   difficulty,
@@ -27,7 +28,8 @@ INSERT INTO challenges (
   $2,
   $3,
   $4,
-  $5
+  $5,
+  $6
 )
 RETURNING *;
 
@@ -35,10 +37,11 @@ RETURNING *;
 UPDATE challenges
 SET
   description = $2,
-  category = $3,
-  muscle_groups = $4,
-  difficulty = $5,
-  calories_burned_estimate = $6,
+  description_metric = $3,
+  category = $4,
+  muscle_groups = $5,
+  difficulty = $6,
+  calories_burned_estimate = $7,
   updated_at = NOW()
 WHERE id = $1;
 

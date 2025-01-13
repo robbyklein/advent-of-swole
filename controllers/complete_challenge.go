@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
@@ -12,21 +13,21 @@ import (
 )
 
 func CompleteChallengePOST(w http.ResponseWriter, r *http.Request) {
+	// Get the user
 	user, ok := r.Context().Value(config.UserContextKey).(sqlc.User)
-
 	if !ok {
 		http.Error(w, "Must be logged in", http.StatusInternalServerError)
 		return
 	}
 
-	// Parse challenge_id form
+	// Parse challenge_id from form
 	challengeID, err := strconv.ParseInt(r.FormValue("challenge_id"), 10, 64)
 	if err != nil || challengeID <= 0 {
 		http.Error(w, "Invalid challenge_id", http.StatusBadRequest)
 		return
 	}
 
-	// Parse day_id form
+	// Parse day_id from form
 	dayID, err := strconv.ParseInt(r.FormValue("day_id"), 10, 64)
 	if err != nil || dayID <= 0 {
 		http.Error(w, "Invalid day_id", http.StatusBadRequest)
@@ -47,15 +48,21 @@ func CompleteChallengePOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate the day is the current day in the user's timezone
-	userTZ := helpers.GetUserTimezone(user)
-	now := time.Now().In(userTZ)
-	currentYear, currentMonth, currentDay := now.Date()
-	if !(int(currentYear) == int(challengeMonth.Year) &&
-		int(currentMonth) == int(challengeMonth.Month) &&
-		int(currentDay) == int(dayObj.DayNumber)) {
-		http.Error(w, "You can only complete challenges for the current day in your timezone", http.StatusForbidden)
-		return
+	// Determine if we are in development mode
+	isDev := os.Getenv("GO_ENV") == "development"
+
+	// Only enforce the "current day" check if NOT in development mode
+	if !isDev {
+		userTZ := helpers.GetUserTimezone(user)
+		now := time.Now().In(userTZ)
+		currentYear, currentMonth, currentDay := now.Date()
+
+		if !(int(currentYear) == int(challengeMonth.Year) &&
+			int(currentMonth) == int(challengeMonth.Month) &&
+			int(currentDay) == int(dayObj.DayNumber)) {
+			http.Error(w, "You can only complete challenges for the current day in your timezone", http.StatusForbidden)
+			return
+		}
 	}
 
 	// Record the challenge completion in the database
@@ -71,7 +78,7 @@ func CompleteChallengePOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Reload page
+	// Redirect the user back to the referring page (or home if none)
 	referer := r.Header.Get("Referer")
 	if referer == "" {
 		referer = "/"

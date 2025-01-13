@@ -11,6 +11,7 @@ import (
 type Challenge struct {
 	ID                     int64
 	Description            string
+	DescriptionMetric      string
 	Category               string
 	MuscleGroups           []string
 	Difficulty             int32
@@ -42,14 +43,15 @@ type DayChallenge struct {
 }
 
 type User struct {
-	ID              int64
-	OauthProvider   string
-	OauthProviderID string
-	Email           string
-	Timezone        string
-	DisplayName     string
-	CreatedAt       pgtype.Timestamptz
-	UpdatedAt       pgtype.Timestamptz
+	ID                int64
+	OauthProvider     string
+	OauthProviderID   string
+	Email             string
+	Timezone          string
+	DisplayName       string
+	MeasurementSystem string
+	CreatedAt         pgtype.Timestamptz
+	UpdatedAt         pgtype.Timestamptz
 }
 
 type UserChallengeCompletion struct {

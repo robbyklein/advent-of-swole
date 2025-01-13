@@ -1,0 +1,36 @@
+.stats {
+  &__main {
+    padding: 64px 0;
+  }
+
+  &__flex {
+    display: flex;
+    gap: 24px;
+
+    .stats-section {
+      flex: 1;
+    }
+  }
+}
+
+.stats-section {
+  margin-top: 24px;
+
+  &__heading {
+    margin-bottom: 24px;
+  }
+}
+
+.stats-section-pie {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+
+  &__chart {
+    width: 240px;
+  }
+
+  &__legend {
+    flex: 1;
+  }
+}

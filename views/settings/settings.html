@@ -38,6 +38,15 @@
             </div>
 
             <div class="field">
+              <label for="measurement_system">Measurement system</label>
+              <select id="measurement_system" name="measurementSystem">
+                <option value="imperial" {{ if eq .User.MeasurementSystem "imperial" }}selected{{ end }}>Imperial</option>
+                <option value="metric" {{ if eq .User.MeasurementSystem "metric" }}selected{{ end }}>Metric</option>
+              </select>
+            </div>
+
+
+            <div class="field">
               <button class="button button--full-width button--primary" type="submit">Save</button>
             </div>
 

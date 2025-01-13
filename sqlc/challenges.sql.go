@@ -12,6 +12,7 @@ import (
 const createChallenge = `-- name: CreateChallenge :one
 INSERT INTO challenges (
   description,
+  description_metric,
   category,
   muscle_groups,
   difficulty,
@@ -21,13 +22,15 @@ INSERT INTO challenges (
   $2,
   $3,
   $4,
-  $5
+  $5,
+  $6
 )
-RETURNING id, description, category, muscle_groups, difficulty, calories_burned_estimate, created_at, updated_at, points
+RETURNING id, description, description_metric, category, muscle_groups, difficulty, calories_burned_estimate, created_at, updated_at, points
 `
 
 type CreateChallengeParams struct {
 	Description            string
+	DescriptionMetric      string
 	Category               string
 	MuscleGroups           []string
 	Difficulty             int32
@@ -37,6 +40,7 @@ type CreateChallengeParams struct {
 func (q *Queries) CreateChallenge(ctx context.Context, arg CreateChallengeParams) (Challenge, error) {
 	row := q.db.QueryRow(ctx, createChallenge,
 		arg.Description,
+		arg.DescriptionMetric,
 		arg.Category,
 		arg.MuscleGroups,
 		arg.Difficulty,
@@ -46,6 +50,7 @@ func (q *Queries) CreateChallenge(ctx context.Context, arg CreateChallengeParams
 	err := row.Scan(
 		&i.ID,
 		&i.Description,
+		&i.DescriptionMetric,
 		&i.Category,
 		&i.MuscleGroups,
 		&i.Difficulty,
@@ -68,7 +73,7 @@ func (q *Queries) DeleteChallenge(ctx context.Context, id int64) error {
 }
 
 const getChallenge = `-- name: GetChallenge :one
-SELECT id, description, category, muscle_groups, difficulty, calories_burned_estimate, created_at, updated_at, points
+SELECT id, description, description_metric, category, muscle_groups, difficulty, calories_burned_estimate, created_at, updated_at, points
 FROM challenges
 WHERE id = $1
 LIMIT 1
@@ -80,6 +85,7 @@ func (q *Queries) GetChallenge(ctx context.Context, id int64) (Challenge, error)
 	err := row.Scan(
 		&i.ID,
 		&i.Description,
+		&i.DescriptionMetric,
 		&i.Category,
 		&i.MuscleGroups,
 		&i.Difficulty,
@@ -92,7 +98,7 @@ func (q *Queries) GetChallenge(ctx context.Context, id int64) (Challenge, error)
 }
 
 const getChallengeByDescription = `-- name: GetChallengeByDescription :one
-SELECT id, description, category, muscle_groups, difficulty, calories_burned_estimate, created_at, updated_at, points
+SELECT id, description, description_metric, category, muscle_groups, difficulty, calories_burned_estimate, created_at, updated_at, points
 FROM challenges
 WHERE description = $1
 LIMIT 1
@@ -104,6 +110,7 @@ func (q *Queries) GetChallengeByDescription(ctx context.Context, description str
 	err := row.Scan(
 		&i.ID,
 		&i.Description,
+		&i.DescriptionMetric,
 		&i.Category,
 		&i.MuscleGroups,
 		&i.Difficulty,
@@ -116,7 +123,7 @@ func (q *Queries) GetChallengeByDescription(ctx context.Context, description str
 }
 
 const listChallenges = `-- name: ListChallenges :many
-SELECT id, description, category, muscle_groups, difficulty, calories_burned_estimate, created_at, updated_at, points
+SELECT id, description, description_metric, category, muscle_groups, difficulty, calories_burned_estimate, created_at, updated_at, points
 FROM challenges
 ORDER BY id
 `
@@ -133,6 +140,7 @@ func (q *Queries) ListChallenges(ctx context.Context) ([]Challenge, error) {
 		if err := rows.Scan(
 			&i.ID,
 			&i.Description,
+			&i.DescriptionMetric,
 			&i.Category,
 			&i.MuscleGroups,
 			&i.Difficulty,
@@ -155,10 +163,11 @@ const updateChallenge = `-- name: UpdateChallenge :exec
 UPDATE challenges
 SET
   description = $2,
-  category = $3,
-  muscle_groups = $4,
-  difficulty = $5,
-  calories_burned_estimate = $6,
+  description_metric = $3,
+  category = $4,
+  muscle_groups = $5,
+  difficulty = $6,
+  calories_burned_estimate = $7,
   updated_at = NOW()
 WHERE id = $1
 `
@@ -166,6 +175,7 @@ WHERE id = $1
 type UpdateChallengeParams struct {
 	ID                     int64
 	Description            string
+	DescriptionMetric      string
 	Category               string
 	MuscleGroups           []string
 	Difficulty             int32
@@ -176,6 +186,7 @@ func (q *Queries) UpdateChallenge(ctx context.Context, arg UpdateChallengeParams
 	_, err := q.db.Exec(ctx, updateChallenge,
 		arg.ID,
 		arg.Description,
+		arg.DescriptionMetric,
 		arg.Category,
 		arg.MuscleGroups,
 		arg.Difficulty,

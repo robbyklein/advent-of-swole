@@ -49,7 +49,8 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, templateName string,
 	}
 
 	// Add the current year for the footer
-	data["Year"] = time.Now().In(initializers.Location).Year()
+	data["FooterYear"] = time.Now().In(initializers.Location).Year()
+	data["CurrentChallenge"] = "2025-01"
 
 	// Render the template
 	err = initializers.Templates.ExecuteTemplate(w, templateName, data)

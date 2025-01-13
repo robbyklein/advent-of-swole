@@ -2,13 +2,118 @@
   {{ template "head" . }}
   {{ template "header" . }}
 
-  <main class="leaderboard__main">
+  <main class="stats__main">
     <div class="width">
 
-      <div class="leaderboard__header">
+      <div class="stats__header">
         <h1>Statistics</h1>
+        <p>Here's some insight into this year's Advent of Swole!</p>
       </div>
 
+      <div class="box stats-section">
+        <h2 class="stats-section__heading">Calories Burned</h2>
+
+        <div class="bar-graph">
+          <div class="bar-graph__top">
+            <div class="bar-graph__top-left">
+              {{range .Increments}}
+                <span>{{.}}</span>
+              {{end}}
+            </div>
+        
+            <div class="bar-graph__top-right">
+              {{range .Bars}}
+              <div class="bar-graph__bar">
+                <div style="height: {{.Percentage}}%" class="bar-graph__bar-filled">
+                  {{if gt .Percentage 10.0}}
+                    {{.Calories}}
+                  {{end}}
+                </div>
+              </div>
+              {{end}}
+            </div>
+          </div>
+        
+          <div class="bar-graph__bottom">
+            <div class="bar-graph__bottom-left"></div>
+            <div class="bar-graph__bottom-right">
+              {{range .Bars}}
+                <div class="bar-graph__bottom-day">{{.Day}}</div>
+              {{end}}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats__flex">
+        <div class="box stats-section">
+          <h2 class="stats-section__heading">Muscles Breakdown</h2>
+
+          <div class="stats-section-pie">
+            <div class="stats-section-pie__chart">
+              <svg viewBox="0 0 32 32">
+                {{range .PieChartSlices}}
+                  <path stroke="#f6f6f6" stroke-width=".15" d="{{.Path}}" fill="{{.Color}}" />
+                {{end}}
+              </svg>
+            </div>
+
+            <div class="stats-section-pie__legend">
+              <ul class="pie-chart__legend">
+                {{range .Muscles}}
+                  <li>
+                    <span style="background-color: {{.Color}};"></span>
+                    {{.Category}} ({{printf "%.2f" .Percentage}}%)
+                  </li>
+                {{end}}
+              </ul>
+            </div>
+          </div>
+
+  
+        </div>
+
+        <div class="box stats-section">
+          <h2 class="stats-section__heading">Categories Breakdown</h2>
+
+          <div class="stats-section-pie">
+            <div class="stats-section-pie__chart">
+              <svg viewBox="0 0 32 32" class="pie-chart-svg">
+                {{range .CategoryPieChartSlices}}
+                  <path stroke="#f6f6f6" stroke-width="0.15"  d="{{.Path}}" fill="{{.Color}}" />
+                {{end}}
+              </svg>
+            </div>
+
+            <div class="stats-section-pie__legend">
+              <ul class="pie-chart__legend">
+                {{range .Categories}}
+                  <li>
+                    <span style="background-color: {{.Color}};"></span>
+                    {{.Category}} ({{printf "%.2f" .Percentage}}%)
+                  </li>
+                {{end}}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats__flex">
+        <div class="box stats-section">
+          <h2 class="stats-section__heading">Participants</h2>
+          <h3>{{ .TotalParticipants }}</h3>
+        </div>
+        <div class="box stats-section">
+          <h2 class="stats-section__heading">Your place</h2>
+          <h3>{{ .CurrentPlace }}</h3>
+        </div>
+
+        <div class="box stats-section">
+          <h2 class="stats-section__heading">Completed challenges</h2>
+          <h3>{{ .TotalChallengesCompleted }}</h3>
+        </div>
+      </div>
 
     </div>
   </main>

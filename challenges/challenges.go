@@ -3,6 +3,7 @@ package challenges
 type Challenge struct {
 	ID                     int
 	Description            string
+	DescriptionMetric      string
 	Category               string
 	MuscleGroups           []string
 	Difficulty             int

@@ -26,12 +26,6 @@ func init() {
 }
 
 func main() {
-	// scripts.PopulateDatabase()
-
-	// err := scripts.CreateRandomChallengeMonth(2025, 1) // year=2025, month=1
-	// if err != nil {
-	// 	fmt.Printf("Failed to create random challenge month: %v\n", err)
-	// }
 
 	// Setup router
 	router := chi.NewRouter()
@@ -51,7 +45,7 @@ func main() {
 		r.Use(middle.OptionalAuthMiddleware)
 
 		r.Get("/", controllers.HomeGET)
-		r.Get("/leaderboard", controllers.LeaderboardGET)
+		r.Get("/leaderboard/{year}-{month}", controllers.LeaderboardGET)
 		r.Get("/day/{year}-{month}-{dayNumber}", controllers.DayGET)
 		r.Get("/login", controllers.LoginGET)
 		r.Get("/logout", controllers.LogoutGET)
@@ -65,7 +59,7 @@ func main() {
 	router.Group(func(r chi.Router) {
 		r.Use(middle.AuthMiddleware)
 
-		r.Get("/stats", controllers.StatsGET)
+		r.Get("/stats/{year}-{month}", controllers.StatsGET)
 		r.Get("/settings", controllers.SettingsGET)
 		r.Post("/settings", controllers.SettingsPOST)
 		r.Post("/challenge/complete", controllers.CompleteChallengePOST)

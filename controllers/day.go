@@ -3,6 +3,7 @@ package controllers
 import (
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
@@ -104,6 +105,10 @@ func DayGET(w http.ResponseWriter, r *http.Request) {
 
 	// Get the month name
 	monthName := time.Month(monthInt).String()
+
+	if os.Getenv("GO_ENV") == "development" {
+		isCurrentDay = true
+	}
 
 	// Prepare data
 	data := map[string]interface{}{

@@ -7,14 +7,12 @@ package sqlc
 
 import (
 	"context"
-
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const getCaloriesStats = `-- name: GetCaloriesStats :many
 SELECT 
     d.day_number,
-    COALESCE(SUM(c.calories_burned_estimate), 0) AS total_calories
+    COALESCE(SUM(c.calories_burned_estimate)::INT, 0) AS total_calories
 FROM 
     days d
 LEFT JOIN 
@@ -64,31 +62,46 @@ func (q *Queries) GetCaloriesStats(ctx context.Context, arg GetCaloriesStatsPara
 
 const getCategoryStats = `-- name: GetCategoryStats :many
 SELECT 
-    category,
+    c.category,
     COUNT(*) AS count,
-    ROUND((COUNT(*) * 100.0) / SUM(COUNT(*)) OVER (), 2) AS percentage
+    ROUND(
+        (COUNT(*) * 100.0) / SUM(COUNT(*)) OVER (), 
+        2
+    )::FLOAT AS percentage
 FROM 
     challenges c
 JOIN 
-    day_challenges dc ON c.id = dc.challenge_id
+    day_challenges dc 
+    ON c.id = dc.challenge_id
 JOIN 
-    days d ON dc.day_id = d.id
+    days d 
+    ON dc.day_id = d.id
+JOIN 
+    user_challenge_completions ucc 
+    ON c.id = ucc.challenge_id 
+   AND d.id = ucc.day_id
 WHERE 
     d.challenge_month_id = $1
+    AND ucc.user_id = $2
 GROUP BY 
-    category
+    c.category
 ORDER BY 
     percentage DESC
 `
 
+type GetCategoryStatsParams struct {
+	ChallengeMonthID int64
+	UserID           int64
+}
+
 type GetCategoryStatsRow struct {
 	Category   string
 	Count      int64
-	Percentage pgtype.Numeric
+	Percentage float64
 }
 
-func (q *Queries) GetCategoryStats(ctx context.Context, challengeMonthID int64) ([]GetCategoryStatsRow, error) {
-	rows, err := q.db.Query(ctx, getCategoryStats, challengeMonthID)
+func (q *Queries) GetCategoryStats(ctx context.Context, arg GetCategoryStatsParams) ([]GetCategoryStatsRow, error) {
+	rows, err := q.db.Query(ctx, getCategoryStats, arg.ChallengeMonthID, arg.UserID)
 	if err != nil {
 		return nil, err
 	}
@@ -109,31 +122,48 @@ func (q *Queries) GetCategoryStats(ctx context.Context, challengeMonthID int64) 
 
 const getMuscleStats = `-- name: GetMuscleStats :many
 SELECT 
-    UNNEST(muscle_groups) AS muscle_group,
+    UNNEST(c.muscle_groups) AS muscle_group,
     COUNT(*) AS count,
-    ROUND((COUNT(*) * 100.0) / SUM(COUNT(*)) OVER (), 2) AS percentage
+    ROUND(
+        (COUNT(*) * 100.0) / SUM(COUNT(*)) OVER (), 
+        2
+    )::FLOAT AS percentage,
+    SUM(COUNT(*)) OVER ()::FLOAT AS total_count
 FROM 
     challenges c
 JOIN 
-    day_challenges dc ON c.id = dc.challenge_id
+    day_challenges dc 
+    ON c.id = dc.challenge_id
 JOIN 
-    days d ON dc.day_id = d.id
+    days d 
+    ON dc.day_id = d.id
+JOIN 
+    user_challenge_completions ucc 
+    ON c.id = ucc.challenge_id 
+   AND d.id = ucc.day_id
 WHERE 
     d.challenge_month_id = $1
+    AND ucc.user_id = $2
 GROUP BY 
     muscle_group
 ORDER BY 
     percentage DESC
 `
 
+type GetMuscleStatsParams struct {
+	ChallengeMonthID int64
+	UserID           int64
+}
+
 type GetMuscleStatsRow struct {
 	MuscleGroup interface{}
 	Count       int64
-	Percentage  pgtype.Numeric
+	Percentage  float64
+	TotalCount  float64
 }
 
-func (q *Queries) GetMuscleStats(ctx context.Context, challengeMonthID int64) ([]GetMuscleStatsRow, error) {
-	rows, err := q.db.Query(ctx, getMuscleStats, challengeMonthID)
+func (q *Queries) GetMuscleStats(ctx context.Context, arg GetMuscleStatsParams) ([]GetMuscleStatsRow, error) {
+	rows, err := q.db.Query(ctx, getMuscleStats, arg.ChallengeMonthID, arg.UserID)
 	if err != nil {
 		return nil, err
 	}
@@ -141,7 +171,12 @@ func (q *Queries) GetMuscleStats(ctx context.Context, challengeMonthID int64) ([
 	var items []GetMuscleStatsRow
 	for rows.Next() {
 		var i GetMuscleStatsRow
-		if err := rows.Scan(&i.MuscleGroup, &i.Count, &i.Percentage); err != nil {
+		if err := rows.Scan(
+			&i.MuscleGroup,
+			&i.Count,
+			&i.Percentage,
+			&i.TotalCount,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -150,4 +185,86 @@ func (q *Queries) GetMuscleStats(ctx context.Context, challengeMonthID int64) ([
 		return nil, err
 	}
 	return items, nil
+}
+
+const getTotalChallengesCompletedForMonth = `-- name: GetTotalChallengesCompletedForMonth :one
+SELECT 
+    COUNT(*) AS total_challenges_completed
+FROM 
+    user_challenge_completions ucc
+JOIN 
+    days d ON ucc.day_id = d.id
+WHERE 
+    d.challenge_month_id = $1
+    AND ucc.user_id = $2
+`
+
+type GetTotalChallengesCompletedForMonthParams struct {
+	ChallengeMonthID int64
+	UserID           int64
+}
+
+func (q *Queries) GetTotalChallengesCompletedForMonth(ctx context.Context, arg GetTotalChallengesCompletedForMonthParams) (int64, error) {
+	row := q.db.QueryRow(ctx, getTotalChallengesCompletedForMonth, arg.ChallengeMonthID, arg.UserID)
+	var total_challenges_completed int64
+	err := row.Scan(&total_challenges_completed)
+	return total_challenges_completed, err
+}
+
+const getTotalParticipantsForMonth = `-- name: GetTotalParticipantsForMonth :one
+SELECT 
+    COUNT(DISTINCT ucc.user_id) AS total_participants
+FROM 
+    user_challenge_completions ucc
+JOIN 
+    days d ON ucc.day_id = d.id
+WHERE 
+    d.challenge_month_id = $1
+`
+
+func (q *Queries) GetTotalParticipantsForMonth(ctx context.Context, challengeMonthID int64) (int64, error) {
+	row := q.db.QueryRow(ctx, getTotalParticipantsForMonth, challengeMonthID)
+	var total_participants int64
+	err := row.Scan(&total_participants)
+	return total_participants, err
+}
+
+const getUserRankForMonth = `-- name: GetUserRankForMonth :one
+WITH leaderboard AS (
+    SELECT 
+        u.id AS user_id,
+        COALESCE(SUM(c.points), 0) AS total_points
+    FROM 
+        users u
+    LEFT JOIN 
+        user_challenge_completions ucc ON u.id = ucc.user_id
+    LEFT JOIN 
+        challenges c ON ucc.challenge_id = c.id
+    LEFT JOIN 
+        days d ON ucc.day_id = d.id
+    WHERE 
+        d.challenge_month_id = $1
+    GROUP BY 
+        u.id
+    ORDER BY 
+        total_points DESC
+)
+SELECT 
+    RANK() OVER (ORDER BY total_points DESC) AS rank
+FROM 
+    leaderboard
+WHERE 
+    user_id = $2
+`
+
+type GetUserRankForMonthParams struct {
+	ChallengeMonthID int64
+	UserID           int64
+}
+
+func (q *Queries) GetUserRankForMonth(ctx context.Context, arg GetUserRankForMonthParams) (int64, error) {
+	row := q.db.QueryRow(ctx, getUserRankForMonth, arg.ChallengeMonthID, arg.UserID)
+	var rank int64
+	err := row.Scan(&rank)
+	return rank, err
 }

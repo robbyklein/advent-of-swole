@@ -30,7 +30,7 @@ func (q *Queries) LinkChallengeToDay(ctx context.Context, arg LinkChallengeToDay
 }
 
 const listChallengesForDay = `-- name: ListChallengesForDay :many
-SELECT c.id, c.description, c.category, c.muscle_groups, c.difficulty, c.calories_burned_estimate, c.created_at, c.updated_at, c.points
+SELECT c.id, c.description, c.description_metric, c.category, c.muscle_groups, c.difficulty, c.calories_burned_estimate, c.created_at, c.updated_at, c.points
 FROM challenges c
 JOIN day_challenges dc ON c.id = dc.challenge_id
 WHERE dc.day_id = $1
@@ -49,6 +49,7 @@ func (q *Queries) ListChallengesForDay(ctx context.Context, dayID int64) ([]Chal
 		if err := rows.Scan(
 			&i.ID,
 			&i.Description,
+			&i.DescriptionMetric,
 			&i.Category,
 			&i.MuscleGroups,
 			&i.Difficulty,

@@ -41,3 +41,17 @@
     margin: -2px 5px 0 0;
   }
 }
+
+.leaderboard__cell {
+  &--small {
+    min-width: 100px;
+  }
+
+  &--medium {
+    min-width: 140px;
+  }
+
+  &--full {
+    width: 100%;
+  }
+}

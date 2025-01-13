@@ -10,9 +10,12 @@
 @import './components/flash';
 @import './components/footer';
 @import './components/field';
+@import './components/bar-graph';
+@import './components/pie-chart';
 
 @import './pages/login';
 @import './pages/home';
 @import './pages/settings';
 @import './pages/day';
 @import './pages/leaderboard';
+@import './pages/stats';

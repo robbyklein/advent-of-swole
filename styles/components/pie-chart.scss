@@ -1,0 +1,39 @@
+/* Basic setup */
+.pie-chart {
+  position: relative;
+  width: 200px; /* Diameter */
+  height: 200px; /* Diameter */
+  border-radius: 50%; /* Makes it circular */
+  overflow: hidden; /* Hides overflow */
+  transform: rotate(-90deg); /* Start from the top */
+}
+
+/* Each slice */
+.slice {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  clip-path: polygon(50% 50%, 100% 50%, 100% 0, 0 0, 0 100%, 100% 100%, 100% 50%);
+  background: conic-gradient(#f00 0deg 90deg, #0f0 90deg 180deg, #00f 180deg 360deg);
+  border-radius: 50%;
+}
+
+.pie-chart__legend {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.pie-chart__legend li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.pie-chart__legend span {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  margin-right: 10px;
+  border-radius: 50%;
+}

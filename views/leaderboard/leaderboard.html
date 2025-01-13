@@ -12,20 +12,20 @@
       <table class="leaderboard__table">
         <thead>
             <tr>
-                <th>Rank</th>
-                <th>Name</th>
-                <th>Points</th>
+                <th class="leaderboard__cell leaderboard__cell--small">Rank</th>
+                <th class="leaderboard__cell leaderboard__cell--full">Name</th>
+                <th class="leaderboard__cell leaderboard__cell--medium">Points</th>
             </tr>
         </thead>
         <tbody>
             {{range $index, $entry := .Leaderboard}}
             <tr>
-                <td>{{ add $index 1 }}</td>
-                <td>
+                <td class="leaderboard__cell leaderboard__cell--small">{{ add $index 1 }}</td>
+                <td class="leaderboard__cell leaderboard__cell--full">
                   <img src="{{ .GravatarURL }}" alt="{{ .DisplayName }}'s avatar" />
                   <span>{{ .DisplayName }}</span>
                 </td>
-                <td>{{ .TotalPoints }}</td>
+                <td class="leaderboard__cell leaderboard__cell--medium">{{ .TotalPoints }}</td>
             </tr>
             {{else}}
             <tr>
